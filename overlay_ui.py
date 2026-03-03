@@ -6,8 +6,9 @@ from typing import Callable, List
 
 from app_config import AppConfig
 from models import DetectedElement
+from utils import compute_page_slice
 
-FLICKER_FREQUENCIES = [8, 10, 12, 15, 18, 20]
+FLICKER_FREQUENCIES = [8, 9, 10, 11, 12, 13]
 
 
 class FrequencyFlicker:
@@ -20,7 +21,7 @@ class FrequencyFlicker:
         self.targets = []
 
     def add_target(self, widget: tk.Widget, frequency: int) -> None:
-        period = int(1000 / frequency)
+        period = int(1000 / (2 * frequency))
         self.targets.append(
             {
                 "widget": widget,
@@ -45,9 +46,9 @@ class FrequencyFlicker:
 
         try:
             if target["state"]:
-                widget.config(bg="#3498db")
+                widget.config(bg="white", fg="black")
             else:
-                widget.config(bg="#1abc9c")
+                widget.config(bg="black", fg="white")
 
             target["state"] = not target["state"]
             self.root.after(target["period"], lambda: self._flicker(target))
@@ -184,12 +185,8 @@ class OverlayUI:
         if total == 0:
             return
 
-        start = page * items_per_page
-        end = start + items_per_page
+        start, end, has_prev, has_next = compute_page_slice(total, page, items_per_page)
         chunk = all_elements[start:end]
-
-        has_next = end < total
-        has_prev = page > 0
 
         for index, element in enumerate(chunk, 1):
             self._add_option_button(index, element.name)
@@ -229,7 +226,9 @@ class OverlayUI:
         button = tk.Button(
             frame,
             text=label,
-            font=("Arial", 9),
+            font=("Arial", 12, "bold"),
+            height=5,
+            width=16,
             bg="#3498db",
             fg="white",
             relief=tk.RAISED,

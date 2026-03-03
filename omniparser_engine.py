@@ -6,7 +6,6 @@ import time
 import traceback
 from typing import Any, Dict, List, Optional
 
-import pyautogui
 from PIL import Image, ImageGrab
 
 from app_config import AppConfig
@@ -71,18 +70,30 @@ class OmniParserEngine:
             traceback.print_exc()
             raise
 
-    def capture_screen_excluding_overlay(self) -> Optional[Image.Image]:
+    def capture_screen_excluding_overlay(self, overlay_hwnd: Optional[int] = None) -> Optional[Image.Image]:
         try:
-            screen_w, screen_h = pyautogui.size()
-            if self.config.overlay_position.lower() == "right":
-                x = 0
-                width = screen_w - self.config.overlay_width
-            else:
-                x = self.config.overlay_width
-                width = screen_w - self.config.overlay_width
+            import win32con
+            import win32gui
 
-            image = ImageGrab.grab(bbox=(x, 0, x + width, screen_h))
-            return image
+            hwnd = win32gui.GetForegroundWindow()
+            if hwnd and overlay_hwnd and int(hwnd) == int(overlay_hwnd):
+                candidate = win32gui.GetWindow(hwnd, win32con.GW_HWNDNEXT)
+                while candidate:
+                    if (
+                        candidate != overlay_hwnd
+                        and win32gui.IsWindowVisible(candidate)
+                        and not win32gui.IsIconic(candidate)
+                    ):
+                        hwnd = candidate
+                        break
+                    candidate = win32gui.GetWindow(candidate, win32con.GW_HWNDNEXT)
+
+            if hwnd and win32gui.IsWindowVisible(hwnd) and not win32gui.IsIconic(hwnd):
+                left, top, right, bottom = win32gui.GetWindowRect(hwnd)
+                if right > left and bottom > top:
+                    return ImageGrab.grab(bbox=(left, top, right, bottom))
+
+            return None
         except Exception as exc:
             print(f"Screenshot failed: {exc}")
             traceback.print_exc()

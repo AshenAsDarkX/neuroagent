@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import threading
 import time
@@ -7,13 +7,14 @@ from typing import List, Optional
 
 import pyautogui
 
+from agent_controller import AgentController
 from app_config import AppConfig
 from debug_writer import DebugArtifactWriter
 from models import DetectedElement
 from omniparser_engine import OmniParserEngine
 from overlay_ui import OverlayUI
 from ranking import ElementRanker
-from utils import ensure_dir
+from utils import compute_page_slice, ensure_dir
 
 
 class BCIController:
@@ -24,6 +25,12 @@ class BCIController:
         self.debug_writer = DebugArtifactWriter(config)
         self.parser = OmniParserEngine(config)
         self.ranker = ElementRanker(config, self.debug_writer)
+        self.agent_controller = AgentController(
+            scan_function=self.scan_environment,
+            execute_click_function=self.execute_click,
+            find_element_function=self.find_element_by_name,
+            log_action_function=self.log_agent_action,
+        )
 
         self.is_processing = False
         self.is_executing = False
@@ -38,6 +45,61 @@ class BCIController:
             on_quit=self.quit,
         )
         self.ui.root.update_idletasks()
+
+    def scan_environment(self) -> List[DetectedElement]:
+        screenshot = self.parser.capture_screen_excluding_overlay(self.overlay_hwnd)
+        if screenshot is None:
+            return []
+
+        parse_result = self.parser.parse(screenshot)
+        ranked = self.ranker.rank(parse_result.elements)
+        self.debug_writer.save_scan_artifacts(
+            screenshot=screenshot,
+            labeled_img_b64=parse_result.labeled_img_b64,
+            raw=parse_result.raw,
+        )
+        return ranked
+
+    def execute_click(self, target: DetectedElement) -> None:
+        cx, cy = target.center
+        print(f"Click: {target.name} -> ({cx}, {cy})")
+        pyautogui.click(cx, cy)
+
+    def find_element_by_name(
+        self, element_name: str, elements: List[DetectedElement]
+    ) -> Optional[DetectedElement]:
+        query = element_name.strip().lower()
+        if not query:
+            return None
+
+        for element in elements:
+            if element.name.strip().lower() == query:
+                return element
+
+        for element in elements:
+            if query in element.name.strip().lower():
+                return element
+
+        return None
+
+    def start_goal_mode(self, goal: str):
+        self.agent_controller.run_goal(goal)
+
+    def log_agent_action(
+        self,
+        timestamp: str,
+        selected_element: Optional[str],
+        goal_state: Optional[dict],
+        action_result: str,
+        goal: Optional[str] = None,
+    ) -> None:
+        self.debug_writer.append_agent_action_log(
+            timestamp=timestamp,
+            selected_element=selected_element,
+            goal_state=goal_state,
+            action_result=action_result,
+            goal=goal,
+        )
 
     def _render_page(self) -> None:
         self.ui.render_page(self.all_elements, self.page, self.config.items_per_page)
@@ -56,7 +118,7 @@ class BCIController:
 
         def worker() -> None:
             try:
-                screenshot = self.parser.capture_screen_excluding_overlay()
+                screenshot = self.parser.capture_screen_excluding_overlay(self.overlay_hwnd)
                 if screenshot is None:
                     self.ui.set_status_threadsafe("Screenshot failed", "#e74c3c")
                     return
@@ -99,12 +161,12 @@ class BCIController:
             return
 
         total = len(self.all_elements)
-        start = self.page * self.config.items_per_page
-        end = start + self.config.items_per_page
+        start, end, has_prev, has_next = compute_page_slice(
+            total,
+            self.page,
+            self.config.items_per_page,
+        )
         chunk = self.all_elements[start:end]
-
-        has_next = end < total
-        has_prev = self.page > 0
 
         if key_num == 5 and has_next:
             self.page += 1
@@ -127,9 +189,7 @@ class BCIController:
 
         def worker() -> None:
             try:
-                cx, cy = target.center
-                print(f"Click: {target.name} -> ({cx}, {cy})")
-                pyautogui.click(cx, cy)
+                self.execute_click(target)
                 time.sleep(0.5)
 
                 for remaining in range(self.config.wait_after_click_s, 0, -1):

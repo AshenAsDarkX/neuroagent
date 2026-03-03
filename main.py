@@ -15,9 +15,19 @@ def _enable_windows_dpi_awareness() -> None:
 
 _enable_windows_dpi_awareness()
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
+os.environ.setdefault("PADDLE_SUPPRESS_CCACHE_WARNING", "1")
 
 from app_config import AppConfig
 from controller import BCIController
+
+
+SUPPORTED_GOALS = [
+    "Open Spotify",
+    "Open Chrome",
+    "Open File Explorer",
+    "Search",
+    "Close Window",
+]
 
 
 def main() -> None:
