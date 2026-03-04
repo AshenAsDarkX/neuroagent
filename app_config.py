@@ -18,7 +18,7 @@ class AppConfig:
     items_per_page: int = 5
     wait_after_click_s: int = 10
     llm_url: str = "http://localhost:11434/api/generate"
-    llm_model: str = "llava:7b"
+    llm_model: str = "qwen2.5:3b"
 
     @classmethod
     def load(cls) -> "AppConfig":
