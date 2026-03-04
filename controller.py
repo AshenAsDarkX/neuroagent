@@ -141,7 +141,28 @@ class BCIController:
 
         def worker() -> None:
             try:
+                import win32gui
+                import win32con
+
+                # hide overlay
+                try:
+                    if self.overlay_hwnd:
+                        win32gui.ShowWindow(self.overlay_hwnd, win32con.SW_MINIMIZE)
+                except Exception:
+                    pass
+
+                time.sleep(0.2)
+
+                # take screenshot
                 screenshot = self.parser.capture_screen_excluding_overlay(self.overlay_hwnd)
+
+                # restore overlay
+                try:
+                    if self.overlay_hwnd:
+                        win32gui.ShowWindow(self.overlay_hwnd, win32con.SW_RESTORE)
+                except Exception:
+                    pass
+
                 if screenshot is None:
                     self.ui.set_status_threadsafe("Screenshot failed", "#e74c3c")
                     return
