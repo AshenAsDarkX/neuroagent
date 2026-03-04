@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import os
 import sys
@@ -70,26 +70,66 @@ class OmniParserEngine:
             traceback.print_exc()
             raise
 
-    def capture_screen_excluding_overlay(self, overlay_hwnd: Optional[int] = None):
+    def capture_screen_excluding_overlay(self, overlay_hwnd=None):
         try:
-            from PIL import ImageGrab
+            import win32gui
+            import win32ui
+            import win32con
+            from PIL import Image
 
-            # capture full screen
-            img = ImageGrab.grab(all_screens=True)
+            hwnd = win32gui.GetForegroundWindow()
 
-            screen_w, screen_h = img.size
-            overlay_w = self.config.overlay_width
+            # if overlay is active, get previous window
+            if overlay_hwnd and hwnd == overlay_hwnd:
+                hwnd = win32gui.GetWindow(hwnd, win32con.GW_HWNDNEXT)
 
-            # remove overlay area
-            if self.config.overlay_position.lower() == "right":
-                img = img.crop((0, 0, screen_w - overlay_w, screen_h))
-            else:
-                img = img.crop((overlay_w, 0, screen_w, screen_h))
+            # still overlay? try previous again
+            if overlay_hwnd and hwnd == overlay_hwnd:
+                hwnd = win32gui.GetWindow(hwnd, win32con.GW_HWNDPREV)
+
+            left, top, right, bottom = win32gui.GetWindowRect(hwnd)
+
+            width = right - left
+            height = bottom - top
+
+            hwnd_dc = win32gui.GetWindowDC(hwnd)
+            mfc_dc = win32ui.CreateDCFromHandle(hwnd_dc)
+            save_dc = mfc_dc.CreateCompatibleDC()
+
+            bitmap = win32ui.CreateBitmap()
+            bitmap.CreateCompatibleBitmap(mfc_dc, width, height)
+            save_dc.SelectObject(bitmap)
+
+            save_dc.BitBlt(
+                (0, 0),
+                (width, height),
+                mfc_dc,
+                (0, 0),
+                win32con.SRCCOPY,
+            )
+
+            bmp_info = bitmap.GetInfo()
+            bmp_str = bitmap.GetBitmapBits(True)
+
+            img = Image.frombuffer(
+                "RGB",
+                (bmp_info["bmWidth"], bmp_info["bmHeight"]),
+                bmp_str,
+                "raw",
+                "BGRX",
+                0,
+                1,
+            )
+
+            win32gui.DeleteObject(bitmap.GetHandle())
+            save_dc.DeleteDC()
+            mfc_dc.DeleteDC()
+            win32gui.ReleaseDC(hwnd, hwnd_dc)
 
             return img
 
-        except Exception as exc:
-            print(f"Screenshot failed: {exc}")
+        except Exception as e:
+            print(f"Active window capture failed: {e}")
             import traceback
             traceback.print_exc()
             return None
