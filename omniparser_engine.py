@@ -70,32 +70,27 @@ class OmniParserEngine:
             traceback.print_exc()
             raise
 
-    def capture_screen_excluding_overlay(self, overlay_hwnd: Optional[int] = None) -> Optional[Image.Image]:
+    def capture_screen_excluding_overlay(self, overlay_hwnd: Optional[int] = None):
         try:
-            import win32con
-            import win32gui
+            from PIL import ImageGrab
 
-            hwnd = win32gui.GetForegroundWindow()
-            if hwnd and overlay_hwnd and int(hwnd) == int(overlay_hwnd):
-                candidate = win32gui.GetWindow(hwnd, win32con.GW_HWNDNEXT)
-                while candidate:
-                    if (
-                        candidate != overlay_hwnd
-                        and win32gui.IsWindowVisible(candidate)
-                        and not win32gui.IsIconic(candidate)
-                    ):
-                        hwnd = candidate
-                        break
-                    candidate = win32gui.GetWindow(candidate, win32con.GW_HWNDNEXT)
+            # capture full screen
+            img = ImageGrab.grab(all_screens=True)
 
-            if hwnd and win32gui.IsWindowVisible(hwnd) and not win32gui.IsIconic(hwnd):
-                left, top, right, bottom = win32gui.GetWindowRect(hwnd)
-                if right > left and bottom > top:
-                    return ImageGrab.grab(bbox=(left, top, right, bottom))
+            screen_w, screen_h = img.size
+            overlay_w = self.config.overlay_width
 
-            return None
+            # remove overlay area
+            if self.config.overlay_position.lower() == "right":
+                img = img.crop((0, 0, screen_w - overlay_w, screen_h))
+            else:
+                img = img.crop((overlay_w, 0, screen_w, screen_h))
+
+            return img
+
         except Exception as exc:
             print(f"Screenshot failed: {exc}")
+            import traceback
             traceback.print_exc()
             return None
 
