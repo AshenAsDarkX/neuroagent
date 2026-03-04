@@ -1,8 +1,8 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import json
 import re
-from typing import List
+from typing import Any, Dict, List, Tuple
 
 from app_config import AppConfig
 from debug_writer import DebugArtifactWriter
@@ -76,11 +76,25 @@ class ElementRanker:
         if not survivors:
             return []
 
-        prompt = self._build_prompt(survivors)
-        raw_response = self._query_llm(prompt)
-        chosen_indices = self._parse_chosen_indices(raw_response)
+        ui_state = self._build_ui_state(survivors)
+        goal_prompt = self._build_goal_prompt(ui_state)
+        raw_response = self._query_llm(goal_prompt)
 
-        result = self._map_ranked_elements(elements, survivors, chosen_indices)
+        valid_ids = {index for index, _ in survivors}
+        actions = self._parse_actions(raw_response, valid_ids)
+        result = self._map_goal_elements(elements, actions)
+
+        chosen_indices: List[int] = [target for _, target in actions]
+
+        if not result:
+            print("[LLM] Goal generation failed or invalid JSON. Falling back to legacy ranking.")
+            ranking_prompt = self._build_prompt(survivors)
+            fallback_raw = self._query_llm(ranking_prompt)
+            chosen_indices = self._parse_chosen_indices(fallback_raw)
+            result = self._map_ranked_elements(elements, survivors, chosen_indices)
+            if result:
+                raw_response = fallback_raw
+
         if not result:
             print("[LLM] Fallback: using pre-filtered survivors directly")
             for _, element in survivors[:14]:
@@ -116,6 +130,63 @@ class ElementRanker:
             survivors.append((index, element))
 
         return survivors
+
+    def _build_ui_state(self, survivors: List[tuple[int, DetectedElement]]) -> Dict[str, Any]:
+        ui_elements: List[Dict[str, Any]] = []
+
+        for index, element in survivors:
+            clean_name = re.sub(r"\s+", " ", (element.name or "").strip())
+            if not clean_name:
+                clean_name = f"Element {index}"
+
+            ui_elements.append(
+                {
+                    "id": index,
+                    "name": clean_name[:80],
+                    "interactive": bool(element.interactive),
+                    "type": self._infer_element_type(element, clean_name),
+                }
+            )
+
+        return {
+            "environment": "desktop",
+            "elements": ui_elements,
+        }
+
+    @staticmethod
+    def _infer_element_type(element: DetectedElement, clean_name: str) -> str:
+        raw_type = (element.element_type or "").strip().lower()
+        if raw_type:
+            return raw_type
+
+        lowered = clean_name.lower()
+        if any(token in lowered for token in ("search", "input", "type here")):
+            return "input"
+        if any(token in lowered for token in ("download", "folder", "documents", "explorer")):
+            return "folder"
+        if any(token in lowered for token in ("button", "ok", "cancel", "submit")):
+            return "button"
+        return "icon"
+
+    def _build_goal_prompt(self, ui_state: Dict[str, Any]) -> str:
+        ui_state_json = json.dumps(ui_state, ensure_ascii=False, indent=2)
+        return (
+            "You are a computer control agent.\n\n"
+            "Given the following UI elements visible on the screen, generate the most useful actions "
+            "a normal user might perform.\n\n"
+            "Each action MUST reference a valid element id.\n\n"
+            "Return JSON in this format:\n\n"
+            "{\n"
+            "  \"actions\": [\n"
+            "    {\"goal\": \"Open Chrome\", \"target\": 0},\n"
+            "    {\"goal\": \"Open Spotify\", \"target\": 1},\n"
+            "    {\"goal\": \"Open Downloads\", \"target\": 2}\n"
+            "  ]\n"
+            "}\n\n"
+            "Only generate actions that correspond to visible elements.\n"
+            "Do not include explanations, markdown, or any additional keys.\n\n"
+            f"UI STATE JSON:\n{ui_state_json}\n"
+        )
 
     def _build_prompt(self, survivors: List[tuple[int, DetectedElement]]) -> str:
         candidates = [
@@ -223,21 +294,79 @@ class ElementRanker:
         return ""
 
     @staticmethod
-    def _parse_chosen_indices(raw_response: str) -> List[int]:
+    def _safe_parse_json_object(raw_response: str) -> Any:
         if not raw_response:
+            return None
+
+        text = raw_response.strip()
+        if text.startswith("```"):
+            text = re.sub(r"^```(?:json)?", "", text, flags=re.I).strip()
+            text = re.sub(r"```$", "", text).strip()
+
+        try:
+            return json.loads(text)
+        except Exception:
+            pass
+
+        match = re.search(r"\{.*\}", text, flags=re.S)
+        if not match:
+            return None
+
+        candidate = match.group(0)
+        try:
+            return json.loads(candidate)
+        except Exception:
+            try:
+                return json.loads(candidate.replace("'", '"'))
+            except Exception:
+                return None
+
+    def _parse_actions(self, raw_response: str, valid_ids: set[int]) -> List[Tuple[str, int]]:
+        parsed = self._safe_parse_json_object(raw_response)
+        if not isinstance(parsed, dict):
             return []
 
-        parsed = None
-        try:
-            parsed = json.loads(raw_response)
-        except Exception:
-            match = re.search(r"\{.*\}", raw_response, flags=re.S)
-            if match:
-                try:
-                    parsed = json.loads(match.group(0).replace("'", '"'))
-                except Exception:
-                    parsed = None
+        actions = parsed.get("actions")
+        if not isinstance(actions, list):
+            return []
 
+        seen_targets = set()
+        parsed_actions: List[Tuple[str, int]] = []
+
+        for item in actions:
+            if not isinstance(item, dict):
+                continue
+
+            goal = item.get("goal", "")
+            if not isinstance(goal, str):
+                continue
+            goal = re.sub(r"\s+", " ", goal).strip()
+            if not goal:
+                continue
+
+            target = item.get("target")
+            try:
+                target_id = int(target)
+            except Exception:
+                continue
+
+            if target_id not in valid_ids:
+                continue
+            if target_id in seen_targets:
+                continue
+
+            seen_targets.add(target_id)
+            parsed_actions.append((goal, target_id))
+
+            if len(parsed_actions) >= 14:
+                break
+
+        print(f"[LLM] Parsed actions: {parsed_actions}")
+        return parsed_actions
+
+    @staticmethod
+    def _parse_chosen_indices(raw_response: str) -> List[int]:
+        parsed = ElementRanker._safe_parse_json_object(raw_response)
         if not isinstance(parsed, dict):
             return []
 
@@ -251,6 +380,25 @@ class ElementRanker:
 
         print(f"[LLM] Chosen indices: {indices}")
         return indices
+
+    def _map_goal_elements(
+        self,
+        elements: List[DetectedElement],
+        actions: List[Tuple[str, int]],
+    ) -> List[DetectedElement]:
+        if not actions:
+            return []
+
+        result: List[DetectedElement] = []
+        for goal, target_id in actions:
+            if target_id < 0 or target_id >= len(elements):
+                continue
+
+            copied = DetectedElement(**elements[target_id].__dict__)
+            copied.name = goal
+            result.append(copied)
+
+        return result
 
     def _map_ranked_elements(
         self,
