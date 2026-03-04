@@ -47,23 +47,46 @@ class BCIController:
         self.ui.root.update_idletasks()
 
     def scan_environment(self) -> List[DetectedElement]:
+        # hide overlay so it does not appear in screenshot
+        try:
+            import win32gui
+            import win32con
+            if self.overlay_hwnd:
+                win32gui.ShowWindow(self.overlay_hwnd, win32con.SW_HIDE)
+        except Exception:
+            pass
+
+        time.sleep(0.15)
+
         screenshot = self.parser.capture_screen_excluding_overlay(self.overlay_hwnd)
+
+        # show overlay again
+        try:
+            import win32gui
+            import win32con
+            if self.overlay_hwnd:
+                win32gui.ShowWindow(self.overlay_hwnd, win32con.SW_SHOW)
+        except Exception:
+            pass
+
         if screenshot is None:
             return []
 
         parse_result = self.parser.parse(screenshot)
         ranked = self.ranker.rank(parse_result.elements)
+
         self.debug_writer.save_scan_artifacts(
             screenshot=screenshot,
             labeled_img_b64=parse_result.labeled_img_b64,
             raw=parse_result.raw,
         )
+
         return ranked
 
     def execute_click(self, target: DetectedElement) -> None:
         cx, cy = target.center
-        print(f"Click: {target.name} -> ({cx}, {cy})")
-        pyautogui.click(cx, cy)
+        print(f"Double-click: {target.name} -> ({cx}, {cy})")
+        pyautogui.doubleClick(cx, cy)
 
     def find_element_by_name(
         self, element_name: str, elements: List[DetectedElement]
@@ -185,7 +208,7 @@ class BCIController:
 
         self.is_executing = True
         self.ui.clear_options()
-        self.ui.set_status(f"Clicking: {target.name[:25]}...", "#f39c12")
+        self.ui.set_status(f"Double-clicking: {target.name[:25]}...", "#f39c12")
 
         def worker() -> None:
             try:
