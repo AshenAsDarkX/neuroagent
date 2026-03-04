@@ -264,21 +264,8 @@ class OverlayUI:
         return int(self.root.winfo_id())
 
     def focus_overlay(self, overlay_hwnd: int | None) -> None:
-        def _focus() -> None:
-            try:
-                import win32con
-                import win32gui
-
-                if overlay_hwnd:
-                    win32gui.ShowWindow(overlay_hwnd, win32con.SW_RESTORE)
-                    win32gui.SetForegroundWindow(overlay_hwnd)
-                    win32gui.SetFocus(overlay_hwnd)
-            except Exception:
-                pass
-
-            try:
-                self.root.focus_force()
-            except Exception:
-                pass
-
-        self.root.after(0, _focus)
+        # disabled during scanning to prevent overlay being captured
+        try:
+            self.root.focus_force()
+        except Exception:
+            pass

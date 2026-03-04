@@ -47,27 +47,7 @@ class BCIController:
         self.ui.root.update_idletasks()
 
     def scan_environment(self) -> List[DetectedElement]:
-        # hide overlay so it does not appear in screenshot
-        try:
-            import win32gui
-            import win32con
-            if self.overlay_hwnd:
-                win32gui.ShowWindow(self.overlay_hwnd, win32con.SW_HIDE)
-        except Exception:
-            pass
-
-        time.sleep(0.15)
-
         screenshot = self.parser.capture_screen_excluding_overlay(self.overlay_hwnd)
-
-        # show overlay again
-        try:
-            import win32gui
-            import win32con
-            if self.overlay_hwnd:
-                win32gui.ShowWindow(self.overlay_hwnd, win32con.SW_SHOW)
-        except Exception:
-            pass
 
         if screenshot is None:
             return []
