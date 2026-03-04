@@ -114,19 +114,25 @@ class ElementRanker:
 
     def _prefilter(self, elements: List[DetectedElement]) -> List[tuple[int, DetectedElement]]:
         survivors: List[tuple[int, DetectedElement]] = []
-        seen_names = set()
+
         for index, element in enumerate(elements):
-            name = (element.name or "").strip()
+            # remove non-interactive items
             if not element.interactive:
                 continue
-            if self.is_garbage_label(name):
+
+            name = (element.name or "").strip()
+
+            if not name:
                 continue
 
-            key = name.lower()
-            if key in seen_names:
+            # remove numeric labels
+            if name.replace(".", "").isdigit():
                 continue
 
-            seen_names.add(key)
+            # remove long sentences
+            if len(name.split()) > 4:
+                continue
+
             survivors.append((index, element))
 
         return survivors
@@ -175,12 +181,13 @@ class ElementRanker:
             "Given the following UI elements visible on the screen, generate the most useful actions "
             "a normal user might perform.\n\n"
             "Each action MUST reference a valid element id.\n\n"
+            "The ONLY allowed action is clicking an existing UI element."
+            "Do NOT invent system actions like minimize, maximize, refresh, or add to taskbar."
+            "Each goal must correspond to one visible element."
             "Return JSON in this format:\n\n"
             "{\n"
             "  \"actions\": [\n"
-            "    {\"goal\": \"Open Chrome\", \"target\": 0},\n"
-            "    {\"goal\": \"Open Spotify\", \"target\": 1},\n"
-            "    {\"goal\": \"Open Downloads\", \"target\": 2}\n"
+            "    {\"goal\": \"action\", \"target\": 0},\n"
             "  ]\n"
             "}\n\n"
             "Only generate actions that correspond to visible elements.\n"
@@ -282,7 +289,7 @@ class ElementRanker:
                     "format": "json",
                     "options": {"temperature": 0.1},
                 },
-                timeout=25,
+                timeout=60,
             )
             if response.status_code == 200:
                 raw_text = response.json().get("response", "")
