@@ -18,6 +18,7 @@ class OmniParserEngine:
         self.config = config
         self.omni_available = False
         self._omni: Dict[str, Any] = {}
+        self._device: str = "cpu"
         self._init_omniparser()
 
     def _init_omniparser(self) -> None:
@@ -45,15 +46,22 @@ class OmniParserEngine:
 
             print("OmniParser detected")
             print("Loading models...")
+            try:
+                import torch
+                self._device = "cuda" if torch.cuda.is_available() else "cpu"
+            except Exception:
+                self._device = "cpu"
+            print(f"OmniParser device: {self._device}")
 
             start = time.time()
-            yolo_model = get_yolo_model(model_path=yolo_path)
+            yolo_model = get_yolo_model(model_path=yolo_path, device=self._device)
             print(f"YOLO loaded ({time.time() - start:.1f}s)")
 
             start = time.time()
             caption_model_processor = get_caption_model_processor(
                 model_name="florence2",
                 model_name_or_path=caption_path,
+                device=self._device,
             )
             print(f"Florence2 loaded ({time.time() - start:.1f}s)")
 
@@ -62,6 +70,7 @@ class OmniParserEngine:
                 "get_som_labeled_img": get_som_labeled_img,
                 "yolo_model": yolo_model,
                 "caption_model_processor": caption_model_processor,
+                "device": self._device,
             }
             self.omni_available = True
             print("OmniParser ready")
@@ -70,55 +79,124 @@ class OmniParserEngine:
             traceback.print_exc()
             raise
 
-    def capture_screen_excluding_overlay(self, overlay_hwnd=None):
+    def capture_screen_excluding_overlay(self, overlay_hwnd=None) -> Optional[Image.Image]:
+        """Capture the full desktop and crop out the overlay strip.
+
+        Capture priority:
+          1. Full desktop via win32api  — sees all windows, taskbar, desktop
+          2. PIL ImageGrab.grab()       — reliable cross-session fallback
+          3. Foreground window only     — original behaviour, last resort
+
+        After capture the overlay column is cropped out so OmniParser never
+        sees it, preventing the overlay buttons from being detected as targets.
+        """
+        screenshot = (
+            self._capture_fullscreen_win32()
+            or self._capture_fullscreen_imagegrab()
+            or self._capture_foreground_window(overlay_hwnd)
+        )
+
+        if screenshot is None:
+            print("[Capture] All capture methods failed.")
+            return None
+
+        return self._crop_out_overlay(screenshot)
+
+    # ------------------------------------------------------------------
+    # Capture backends
+    # ------------------------------------------------------------------
+
+    def _capture_fullscreen_win32(self) -> Optional[Image.Image]:
+        """Capture the full virtual desktop using win32api."""
         try:
+            import win32api
+            import win32con
             import win32gui
             import win32ui
-            import win32con
-            from PIL import Image
 
-            hwnd = win32gui.GetForegroundWindow()
+            # SM_XVIRTUALSCREEN / SM_YVIRTUALSCREEN / SM_CXVIRTUALSCREEN /
+            # SM_CYVIRTUALSCREEN cover all monitors in a multi-monitor setup
+            left   = win32api.GetSystemMetrics(win32con.SM_XVIRTUALSCREEN)
+            top    = win32api.GetSystemMetrics(win32con.SM_YVIRTUALSCREEN)
+            width  = win32api.GetSystemMetrics(win32con.SM_CXVIRTUALSCREEN)
+            height = win32api.GetSystemMetrics(win32con.SM_CYVIRTUALSCREEN)
 
-            # if overlay is active, get previous window
-            if overlay_hwnd and hwnd == overlay_hwnd:
-                hwnd = win32gui.GetWindow(hwnd, win32con.GW_HWNDNEXT)
-
-            # still overlay? try previous again
-            if overlay_hwnd and hwnd == overlay_hwnd:
-                hwnd = win32gui.GetWindow(hwnd, win32con.GW_HWNDPREV)
-
-            left, top, right, bottom = win32gui.GetWindowRect(hwnd)
-
-            width = right - left
-            height = bottom - top
-
-            hwnd_dc = win32gui.GetWindowDC(hwnd)
-            mfc_dc = win32ui.CreateDCFromHandle(hwnd_dc)
+            hdesktop = win32gui.GetDesktopWindow()
+            desktop_dc = win32gui.GetWindowDC(hdesktop)
+            mfc_dc = win32ui.CreateDCFromHandle(desktop_dc)
             save_dc = mfc_dc.CreateCompatibleDC()
 
             bitmap = win32ui.CreateBitmap()
             bitmap.CreateCompatibleBitmap(mfc_dc, width, height)
             save_dc.SelectObject(bitmap)
-
-            save_dc.BitBlt(
-                (0, 0),
-                (width, height),
-                mfc_dc,
-                (0, 0),
-                win32con.SRCCOPY,
-            )
+            save_dc.BitBlt((0, 0), (width, height), mfc_dc, (left, top), win32con.SRCCOPY)
 
             bmp_info = bitmap.GetInfo()
-            bmp_str = bitmap.GetBitmapBits(True)
+            bmp_str  = bitmap.GetBitmapBits(True)
 
             img = Image.frombuffer(
                 "RGB",
                 (bmp_info["bmWidth"], bmp_info["bmHeight"]),
-                bmp_str,
-                "raw",
-                "BGRX",
-                0,
-                1,
+                bmp_str, "raw", "BGRX", 0, 1,
+            )
+
+            win32gui.DeleteObject(bitmap.GetHandle())
+            save_dc.DeleteDC()
+            mfc_dc.DeleteDC()
+            win32gui.ReleaseDC(hdesktop, desktop_dc)
+
+            print(f"[Capture] Full desktop via win32 ({width}x{height})")
+            return img
+
+        except Exception as exc:
+            print(f"[Capture] win32 fullscreen failed: {exc}")
+            return None
+
+    def _capture_fullscreen_imagegrab(self) -> Optional[Image.Image]:
+        """Capture the full primary screen using PIL ImageGrab."""
+        try:
+            img = ImageGrab.grab(all_screens=True)
+            img = img.convert("RGB")
+            print(f"[Capture] Full desktop via ImageGrab {img.size}")
+            return img
+        except Exception as exc:
+            print(f"[Capture] ImageGrab fallback failed: {exc}")
+            return None
+
+    def _capture_foreground_window(self, overlay_hwnd=None) -> Optional[Image.Image]:
+        """Original foreground-window-only capture, kept as last resort."""
+        try:
+            import win32gui
+            import win32ui
+            import win32con
+
+            hwnd = win32gui.GetForegroundWindow()
+
+            if overlay_hwnd and hwnd == overlay_hwnd:
+                hwnd = win32gui.GetWindow(hwnd, win32con.GW_HWNDNEXT)
+            if overlay_hwnd and hwnd == overlay_hwnd:
+                hwnd = win32gui.GetWindow(hwnd, win32con.GW_HWNDPREV)
+
+            left, top, right, bottom = win32gui.GetWindowRect(hwnd)
+            width  = right - left
+            height = bottom - top
+
+            hwnd_dc = win32gui.GetWindowDC(hwnd)
+            mfc_dc  = win32ui.CreateDCFromHandle(hwnd_dc)
+            save_dc = mfc_dc.CreateCompatibleDC()
+
+            bitmap = win32ui.CreateBitmap()
+            bitmap.CreateCompatibleBitmap(mfc_dc, width, height)
+            save_dc.SelectObject(bitmap)
+            save_dc.BitBlt((0, 0), (width, height), mfc_dc, (0, 0), win32con.SRCCOPY)
+
+            bmp_info = bitmap.GetInfo()
+            bmp_str  = bitmap.GetBitmapBits(True)
+
+            img = Image.frombuffer(
+                "RGB",
+                (bmp_info["bmWidth"], bmp_info["bmHeight"]),
+                bmp_str, "raw", "BGRX", 0, 1,
             )
 
             win32gui.DeleteObject(bitmap.GetHandle())
@@ -126,12 +204,100 @@ class OmniParserEngine:
             mfc_dc.DeleteDC()
             win32gui.ReleaseDC(hwnd, hwnd_dc)
 
+            print(f"[Capture] Foreground window fallback ({width}x{height})")
             return img
 
-        except Exception as e:
-            print(f"Active window capture failed: {e}")
-            import traceback
+        except Exception as exc:
+            print(f"[Capture] Foreground window capture failed: {exc}")
             traceback.print_exc()
+            return None
+
+    # ------------------------------------------------------------------
+    # Overlay crop
+    # ------------------------------------------------------------------
+
+    def _crop_out_overlay(self, img: Image.Image) -> Image.Image:
+        """Remove the overlay column so OmniParser never sees it.
+
+        Crops based on overlay_position and overlay_width from config,
+        returning the remaining desktop area.  If the image is smaller
+        than expected the original is returned unchanged.
+        """
+        w, h = img.size
+        ow = self.config.overlay_width
+        pos = self.config.overlay_position.lower()
+
+        if pos == "right":
+            crop_box = (0, 0, max(0, w - ow), h)
+        else:  # left
+            crop_box = (min(ow, w), 0, w, h)
+
+        cropped = img.crop(crop_box)
+        print(f"[Capture] Cropped overlay ({pos}): {w}x{h} -> {cropped.size[0]}x{cropped.size[1]}")
+        return cropped
+
+    def capture_specific_window(self, hwnd: int) -> Optional[Image.Image]:
+        """Capture only the window identified by hwnd.
+
+        Used after a click opens a specific window — gives OmniParser a
+        clean, focused image of just that app rather than the full desktop,
+        which produces more relevant and precise element detection.
+
+        Returns None if the window can't be found or captured.
+        """
+        try:
+            import win32gui
+            import win32ui
+            import win32con
+
+            # Make sure the window still exists
+            if not win32gui.IsWindow(hwnd):
+                print(f"[Capture] HWND {hwnd} is no longer valid.")
+                return None
+
+            # Bring it to front so we get a fully rendered frame
+            try:
+                win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
+                win32gui.SetForegroundWindow(hwnd)
+            except Exception:
+                pass  # Non-fatal — still attempt capture
+
+            left, top, right, bottom = win32gui.GetWindowRect(hwnd)
+            width  = right - left
+            height = bottom - top
+
+            if width <= 0 or height <= 0:
+                print(f"[Capture] Window {hwnd} has zero size, skipping.")
+                return None
+
+            hwnd_dc = win32gui.GetWindowDC(hwnd)
+            mfc_dc  = win32ui.CreateDCFromHandle(hwnd_dc)
+            save_dc = mfc_dc.CreateCompatibleDC()
+
+            bitmap = win32ui.CreateBitmap()
+            bitmap.CreateCompatibleBitmap(mfc_dc, width, height)
+            save_dc.SelectObject(bitmap)
+            save_dc.BitBlt((0, 0), (width, height), mfc_dc, (0, 0), win32con.SRCCOPY)
+
+            bmp_info = bitmap.GetInfo()
+            bmp_str  = bitmap.GetBitmapBits(True)
+
+            img = Image.frombuffer(
+                "RGB",
+                (bmp_info["bmWidth"], bmp_info["bmHeight"]),
+                bmp_str, "raw", "BGRX", 0, 1,
+            )
+
+            win32gui.DeleteObject(bitmap.GetHandle())
+            save_dc.DeleteDC()
+            mfc_dc.DeleteDC()
+            win32gui.ReleaseDC(hwnd, hwnd_dc)
+
+            print(f"[Capture] Specific window HWND={hwnd} ({width}x{height})")
+            return img
+
+        except Exception as exc:
+            print(f"[Capture] Specific window capture failed for HWND {hwnd}: {exc}")
             return None
 
     def parse(self, screenshot: Image.Image) -> ParseResult:
@@ -143,6 +309,7 @@ class OmniParserEngine:
         get_som_labeled_img = self._omni["get_som_labeled_img"]
         yolo_model = self._omni["yolo_model"]
         caption_model_processor = self._omni["caption_model_processor"]
+        omni_device = self._omni.get("device")
 
         img_w, img_h = screenshot.size
 
@@ -176,6 +343,7 @@ class OmniParserEngine:
                 ocr_text=ocr_text,
                 iou_threshold=self.config.omni_iou_thresh,
                 imgsz=self.config.omni_img_sz,
+                device=omni_device,
             )
 
             normalized = self._normalize_parsed_content(parsed_content_list)
@@ -264,12 +432,26 @@ class OmniParserEngine:
         if interactive:
             score += 50
 
+        # Prioritize likely user targets on desktop surfaces.
+        if element_type.lower() == "folder":
+            score += 40
+
+        if element_type.lower() in ("file", "document", "video"):
+            score += 30
+
         strong_keywords = [
             "open", "new", "delete", "rename", "copy", "paste", "cut", "share",
             "next", "close", "search", "sort", "view",
         ]
         if any(keyword in lowered for keyword in strong_keywords):
             score += 20
+
+        toolbar_keywords = [
+            "sort", "view", "copy", "paste", "cut",
+            "delete", "rename", "share", "new",
+        ]
+        if any(keyword in lowered for keyword in toolbar_keywords):
+            score -= 25
 
         if "m0,0" in lowered or "l9,0" in lowered:
             score -= 50
@@ -283,6 +465,6 @@ class OmniParserEngine:
             score -= 5
 
         if element_type.lower() == "icon":
-            score += 5
+            score += 25
 
         return score

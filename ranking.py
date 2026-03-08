@@ -72,13 +72,14 @@ class ElementRanker:
             return elements
 
         survivors = self._prefilter(elements)
+        survivors = survivors[:20]
         print(f"[LLM] Pre-filter: {len(elements)} -> {len(survivors)} survivors")
         if not survivors:
             return []
 
         ui_state = self._build_ui_state(survivors)
         goal_prompt = self._build_goal_prompt(ui_state)
-        raw_response = self._query_llm(goal_prompt)
+        raw_response = self._query_llm(goal_prompt, force_json=True)
 
         valid_ids = {index for index, _ in survivors}
         actions = self._parse_actions(raw_response, valid_ids)
@@ -89,7 +90,7 @@ class ElementRanker:
         if not result:
             print("[LLM] Goal generation failed or invalid JSON. Falling back to legacy ranking.")
             ranking_prompt = self._build_prompt(survivors)
-            fallback_raw = self._query_llm(ranking_prompt)
+            fallback_raw = self._query_llm(ranking_prompt, force_json=False)
             chosen_indices = self._parse_chosen_indices(fallback_raw)
             result = self._map_ranked_elements(elements, survivors, chosen_indices)
             if result:
@@ -112,8 +113,29 @@ class ElementRanker:
         print(f"[LLM] Final {len(result)} actions: {[item.name for item in result]}")
         return result
 
+    # Keywords that indicate an element requires keyboard input — unusable in BCI
+    _INPUT_KEYWORDS: frozenset[str] = frozenset({
+        "search", "type here", "enter", "address bar", "url", "find",
+        "input", "text box", "text field", "query", "keyword",
+    })
+
+    def _is_input_element(self, element: DetectedElement, name: str) -> bool:
+        """Return True if this element requires keyboard input to use."""
+        lowered = name.lower()
+
+        # Check element type set by OmniParser
+        if element.element_type.lower() in ("input", "textbox", "text_field"):
+            return True
+
+        # Check name against known input keywords
+        if any(kw in lowered for kw in self._INPUT_KEYWORDS):
+            return True
+
+        return False
+
     def _prefilter(self, elements: List[DetectedElement]) -> List[tuple[int, DetectedElement]]:
         survivors: List[tuple[int, DetectedElement]] = []
+        filtered_inputs = 0
 
         for index, element in enumerate(elements):
             # remove non-interactive items
@@ -133,7 +155,16 @@ class ElementRanker:
             if len(name.split()) > 4:
                 continue
 
+            # BCI filter — remove elements that require typing
+            if self.config.bci_filter_inputs and self._is_input_element(element, name):
+                filtered_inputs += 1
+                print(f"[BCI Filter] Removed input element: '{name}'")
+                continue
+
             survivors.append((index, element))
+
+        if filtered_inputs:
+            print(f"[BCI Filter] Removed {filtered_inputs} input-requiring element(s).")
 
         return survivors
 
@@ -177,13 +208,24 @@ class ElementRanker:
     def _build_goal_prompt(self, ui_state: Dict[str, Any]) -> str:
         ui_state_json = json.dumps(ui_state, ensure_ascii=False, indent=2)
         return (
-            "You are a computer control agent.\n\n"
-            "Given the following UI elements visible on the screen, generate the most useful actions "
-            "a normal user might perform.\n\n"
+            "You are a computer control agent for a Brain-Computer Interface (BCI) system.\n\n"
+            "CRITICAL CONSTRAINT: The user CANNOT type. They can ONLY click.\n"
+            "Do NOT suggest any action that requires keyboard input, such as:\n"
+            "- Typing in a search bar\n"
+            "- Entering a URL\n"
+            "- Filling in a text field\n\n"
+            "Given the following UI elements visible on the screen, generate the most useful "
+            "CLICK-ONLY actions a user might perform.\n\n"
             "Each action MUST reference a valid element id.\n\n"
-            "The ONLY allowed action is clicking an existing UI element."
-            "Do NOT invent system actions like minimize, maximize, refresh, or add to taskbar."
-            "Each goal must correspond to one visible element."
+            "The ONLY allowed action is clicking an existing UI element. "
+            "Do NOT invent system actions like minimize, maximize, refresh, or add to taskbar. "
+            "Each goal must correspond to one visible element.\n"
+            "Rules:\n"
+            "- Generate maximum possible actions.\n"
+            "- Each action must correspond to a visible UI element.\n"
+            "- Do NOT invent actions.\n"
+            "- Do NOT suggest search bars or text inputs.\n"
+            "- Use the element text when possible.\n\n"
             "Return JSON in this format:\n\n"
             "{\n"
             "  \"actions\": [\n"
@@ -275,20 +317,24 @@ class ElementRanker:
             f"Candidates:\n{candidates_json}\n"
         )
 
-    def _query_llm(self, prompt: str) -> str:
-        print(f"[LLM] Sending prompt to {self.config.llm_model}...")
+    def _query_llm(self, prompt: str, force_json: bool = True) -> str:
+        print(f"[LLM] Sending prompt to {self.config.llm_model} (json={force_json})...")
         try:
             import requests
 
+            payload: dict = {
+                "model": self.config.llm_model,
+                "prompt": prompt,
+                "stream": False,
+                "options": {"temperature": 0.1},
+            }
+
+            if force_json:
+                payload["format"] = "json"
+
             response = requests.post(
                 self.config.llm_url,
-                json={
-                    "model": self.config.llm_model,
-                    "prompt": prompt,
-                    "stream": False,
-                    "format": "json",
-                    "options": {"temperature": 0.1},
-                },
+                json=payload,
                 timeout=60,
             )
             if response.status_code == 200:
