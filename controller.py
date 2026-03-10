@@ -3,51 +3,52 @@ from __future__ import annotations
 import threading
 import time
 import traceback
-from typing import List, Optional
+from typing import Any, List, Optional
 
 import pyautogui
 
-from agent_controller import AgentController
 from app_config import AppConfig
 from debug_writer import DebugArtifactWriter
 from models import DetectedElement
 from omniparser_engine import OmniParserEngine
-from overlay_ui import OverlayUI
 from ranking import ElementRanker
-from utils import compute_page_slice, ensure_dir
+from utils import ensure_dir
 
 
 class BCIController:
-    def __init__(self, config: AppConfig) -> None:
+    def __init__(
+        self,
+        config: AppConfig,
+        bci: Any | None = None,
+        bci_screen: Any | None = None,
+    ) -> None:
         self.config = config
+        self.bci = bci
+        self.bci_screen = bci_screen
+        if self.bci_screen is None:
+            raise RuntimeError("BCI display is required.")
+
         ensure_dir(self.config.debug_dir)
 
         self.debug_writer = DebugArtifactWriter(config)
-        self.parser = OmniParserEngine(config)
+        self.parser = OmniParserEngine(config, status_callback=self.bci_screen.set_info)
         self.ranker = ElementRanker(config, self.debug_writer)
-        self.agent_controller = AgentController(
-            scan_function=self.scan_environment,
-            execute_click_function=self.execute_click,
-            find_element_function=self.find_element_by_name,
-            log_action_function=self.log_agent_action,
-        )
 
         self.is_processing = False
         self.is_executing = False
-        self.page = 0
-        self.all_elements: List[DetectedElement] = []
-        self.overlay_hwnd: Optional[int] = None
+        self.agent_actions: List[DetectedElement] = []
+        self.last_ranked: List[DetectedElement] = []
 
-        self.ui = OverlayUI(
-            config=self.config,
-            on_scan=self.scan,
-            on_select=self.select_key,
-            on_quit=self.quit,
-        )
-        self.ui.root.update_idletasks()
+        self.bci_screen.root.bind("<space>", lambda _event: self.scan())
+        self.bci_screen.root.bind("q", lambda _event: self.quit())
+        self.bci_screen.root.bind("<Escape>", lambda _event: self.quit())
+
+    def _capture_main_monitor(self):
+        time.sleep(0.2)
+        return self.parser.capture_main_monitor()
 
     def scan_environment(self) -> List[DetectedElement]:
-        screenshot = self.parser.capture_screen_excluding_overlay(self.overlay_hwnd)
+        screenshot = self._capture_main_monitor()
 
         if screenshot is None:
             return []
@@ -85,73 +86,59 @@ class BCIController:
 
         return None
 
-    def start_goal_mode(self, goal: str):
-        self.agent_controller.run_goal(goal)
+    def _update_bci_screen_actions(self, agent_actions: List[DetectedElement]) -> None:
+        self.agent_actions = list(agent_actions[:6])
 
-    def log_agent_action(
-        self,
-        timestamp: str,
-        selected_element: Optional[str],
-        goal_state: Optional[dict],
-        action_result: str,
-        goal: Optional[str] = None,
-    ) -> None:
-        self.debug_writer.append_agent_action_log(
-            timestamp=timestamp,
-            selected_element=selected_element,
-            goal_state=goal_state,
-            action_result=action_result,
-            goal=goal,
-        )
+        actions = [
+            str(getattr(action, "goal", getattr(action, "name", "")))
+            for action in self.agent_actions
+        ]
+        self.bci_screen.root.after(0, lambda: self.bci_screen.show_actions(actions))
 
-    def _render_page(self) -> None:
-        self.ui.render_page(self.all_elements, self.page, self.config.items_per_page)
+    def _run_bci_selection(self) -> None:
+        if not self.bci:
+            return
+        if self.is_processing or self.is_executing:
+            return
+        if not self.agent_actions:
+            return
+
+        def worker() -> None:
+            try:
+                raw_selection = int(self.bci.get_selection())
+                selection = raw_selection % len(self.agent_actions)
+                selected_action = self.agent_actions[selection]
+                self.bci_screen.root.after(0, lambda s=selection: self.bci_screen.highlight(s))
+                print(f"[BCI] decoder selection {raw_selection} -> action {selection + 1}")
+                self.bci_screen.root.after(0, lambda: self._execute_action(selected_action))
+            except Exception as exc:
+                traceback.print_exc()
+                print(f"[BCI] decode failed: {str(exc)[:60]}")
+
+        threading.Thread(target=worker, daemon=True).start()
 
     def scan(self) -> None:
-        self.ui.stop_flicker()
-
         if self.is_processing or self.is_executing:
             return
 
         self.is_processing = True
-        self.page = 0
-        self.all_elements = []
-        self.ui.clear_options()
-        self.ui.set_status("Taking screenshot...", "#f39c12")
+        self.last_ranked = []
+        self.agent_actions = []
+        self.bci_screen.root.after(0, lambda: self.bci_screen.show_actions([]))
 
         def worker() -> None:
             try:
-                import win32gui
-                import win32con
-
-                # hide overlay
-                try:
-                    if self.overlay_hwnd:
-                        win32gui.ShowWindow(self.overlay_hwnd, win32con.SW_MINIMIZE)
-                except Exception:
-                    pass
-
-                time.sleep(0.2)
-
-                # take screenshot
-                screenshot = self.parser.capture_screen_excluding_overlay(self.overlay_hwnd)
-
-                # restore overlay
-                try:
-                    if self.overlay_hwnd:
-                        win32gui.ShowWindow(self.overlay_hwnd, win32con.SW_RESTORE)
-                except Exception:
-                    pass
+                screenshot = self._capture_main_monitor()
 
                 if screenshot is None:
-                    self.ui.set_status_threadsafe("Screenshot failed", "#e74c3c")
+                    print("[Scan] Screenshot failed.")
                     return
 
-                self.ui.set_status_threadsafe("Detecting elements...", "#f39c12")
                 parse_result = self.parser.parse(screenshot)
 
-                self.ui.set_status_threadsafe("LLM filtering...", "#f39c12")
                 ranked = self.ranker.rank(parse_result.elements)
+                self.last_ranked = ranked
+                self._update_bci_screen_actions(ranked)
 
                 print("Top elements:")
                 for index, element in enumerate(ranked[:5], 1):
@@ -164,52 +151,35 @@ class BCIController:
                 )
 
                 if not ranked:
-                    self.ui.set_status_threadsafe("No options found. Press SPACE to retry", "#e67e22")
+                    print("[Scan] No options found.")
                     return
 
-                self.all_elements = ranked
-                self.ui.schedule(0, self._render_page)
+                self.bci_screen.root.after(50, self._run_bci_selection)
             except Exception as exc:
                 traceback.print_exc()
-                self.ui.set_status_threadsafe(f"Error: {str(exc)[:40]}", "#e74c3c")
+                print(f"[Scan] Error: {str(exc)[:80]}")
             finally:
                 self.is_processing = False
-                self.ui.focus_overlay(self.overlay_hwnd)
 
         threading.Thread(target=worker, daemon=True).start()
 
     def select_key(self, key_num: int) -> None:
         if self.is_processing or self.is_executing:
             return
-        if not self.all_elements:
+        if not self.agent_actions:
+            return
+        if key_num < 1 or key_num > len(self.agent_actions):
             return
 
-        total = len(self.all_elements)
-        start, end, has_prev, has_next = compute_page_slice(
-            total,
-            self.page,
-            self.config.items_per_page,
-        )
-        chunk = self.all_elements[start:end]
+        target = self.agent_actions[key_num - 1]
+        self._execute_action(target)
 
-        if key_num == 5 and has_next:
-            self.page += 1
-            self._render_page()
+    def _execute_action(self, target: DetectedElement) -> None:
+        if self.is_processing or self.is_executing:
             return
-
-        if key_num == 6 and has_prev:
-            self.page -= 1
-            self._render_page()
-            return
-
-        if key_num < 1 or key_num > len(chunk):
-            return
-
-        target = chunk[key_num - 1]
 
         self.is_executing = True
-        self.ui.clear_options()
-        self.ui.set_status(f"Double-clicking: {target.name[:25]}...", "#f39c12")
+        print(f"[Action] Double-clicking: {target.name}")
 
         def worker() -> None:
             try:
@@ -217,36 +187,35 @@ class BCIController:
                 time.sleep(0.5)
 
                 for remaining in range(self.config.wait_after_click_s, 0, -1):
-                    self.ui.set_status_threadsafe(f"Next scan in {remaining}s...", "#9b59b6")
+                    print(f"[Action] Next scan in {remaining}s...")
                     time.sleep(1)
-
-                self.ui.set_status_threadsafe("Taking screenshot...", "#f39c12")
             except Exception as exc:
                 traceback.print_exc()
-                self.ui.set_status_threadsafe(f"Click failed: {str(exc)[:30]}", "#e74c3c")
+                print(f"[Action] Click failed: {str(exc)[:60]}")
             finally:
                 self.is_executing = False
-                self.ui.schedule(0, self.scan)
+                self.bci_screen.root.after(0, self.scan)
 
         threading.Thread(target=worker, daemon=True).start()
 
     def quit(self) -> None:
         print("Shutting down...")
-        self.ui.stop()
+        try:
+            self.bci_screen.root.quit()
+            self.bci_screen.root.destroy()
+        except Exception:
+            pass
 
     def run(self) -> None:
-        self.overlay_hwnd = self.ui.get_hwnd()
-        print(f"[BCI] Overlay HWND = {self.overlay_hwnd}")
-
         print("=" * 70)
         print("BCI AUTO-SCAN READY")
         print("=" * 70)
         print("- First scan starts automatically")
         print(f"- After each click: {self.config.wait_after_click_s}s wait -> next scan")
-        print("- Press 1-4 to select, 5=More, 6=Back, Q/ESC=Quit")
-        print(f"- Overlay on {self.config.overlay_position.upper()} (excluded from scans)")
+        print("- BCI options displayed on second monitor")
+        print("- SPACE = scan, Q/ESC = quit")
         print(f"- Debug saved to: {self.config.debug_dir}")
         print("=" * 70)
 
-        self.ui.schedule(500, self.scan)
-        self.ui.run()
+        self.bci_screen.root.after(500, self.scan)
+        self.bci_screen.root.mainloop()
