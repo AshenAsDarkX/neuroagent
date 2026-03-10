@@ -18,17 +18,22 @@ os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 os.environ.setdefault("PADDLE_SUPPRESS_CCACHE_WARNING", "1")
 
 from app_config import AppConfig
+from bci_display import BCIDisplay
 from bci_decoder import EEG2CodeBCI
 from controller import BCIController
 
 
 def main() -> None:
     config = AppConfig.load()
+    bci_screen = BCIDisplay()
+    bci_screen.set_info("EEG2Code loading...")
     bci = EEG2CodeBCI(
-        model_path="EEG2Code_model.hdf5",
-        dataset_path="VP1.mat"
+        model_path=os.path.join(config.base_dir, "model", "EEG2Code_model.hdf5"),
+        dataset_path=os.path.join(config.base_dir, "data", "VP1.mat"),
+        status_callback=bci_screen.set_info,
     )
-    app = BCIController(config)
+    bci_screen.set_info("Starting agent controller...")
+    app = BCIController(config, bci=bci, bci_screen=bci_screen)
     app.run()
 
 

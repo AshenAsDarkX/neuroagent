@@ -5,12 +5,16 @@ from tensorflow.keras.models import load_model
 
 class EEG2CodeBCI:
 
-    def __init__(self, model_path, dataset_path):
+    def __init__(self, model_path, dataset_path, status_callback=None):
+        self._status_callback = status_callback
+        self._status("EEG2Code loading...")
 
         print("[BCI] Loading EEG2Code model...")
         self.model = load_model(model_path)
+        self._status("EEG2Code model loaded")
 
         print("[BCI] Loading dataset...")
+        self._status("EEG2Code dataset loading...")
         data = scipy.io.loadmat(dataset_path)
 
         self.eeg_trials = data["test_data_x"]
@@ -20,6 +24,15 @@ class EEG2CodeBCI:
 
         self.window_size = 150
         self.downsample = 10
+        self._status("EEG2Code ready")
+
+    def _status(self, message):
+        if not self._status_callback:
+            return
+        try:
+            self._status_callback(message)
+        except Exception:
+            pass
 
     def _predict_bits(self, trial):
 
