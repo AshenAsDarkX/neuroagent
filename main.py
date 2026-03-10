@@ -18,20 +18,16 @@ os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 os.environ.setdefault("PADDLE_SUPPRESS_CCACHE_WARNING", "1")
 
 from app_config import AppConfig
+from bci_decoder import EEG2CodeBCI
 from controller import BCIController
-
-
-SUPPORTED_GOALS = [
-    "Open Spotify",
-    "Open Chrome",
-    "Open File Explorer",
-    "Search",
-    "Close Window",
-]
 
 
 def main() -> None:
     config = AppConfig.load()
+    bci = EEG2CodeBCI(
+        model_path="EEG2Code_model.hdf5",
+        dataset_path="VP1.mat"
+    )
     app = BCIController(config)
     app.run()
 
