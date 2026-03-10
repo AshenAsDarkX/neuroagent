@@ -13,8 +13,6 @@ class AppConfig:
     omni_iou_thresh: float = 0.10
     omni_img_sz: int = 640
     omni_use_paddleocr: bool = False
-    overlay_width: int = 300
-    overlay_position: str = "right"
     items_per_page: int = 5
     wait_after_click_s: int = 10
     llm_url: str = "http://localhost:11434/api/generate"

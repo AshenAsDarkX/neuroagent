@@ -14,12 +14,21 @@ from utils import bbox_ratio_xyxy_to_pixels, safe_text
 
 
 class OmniParserEngine:
-    def __init__(self, config: AppConfig) -> None:
+    def __init__(self, config: AppConfig, status_callback=None) -> None:
         self.config = config
+        self._status_callback = status_callback
         self.omni_available = False
         self._omni: Dict[str, Any] = {}
         self._device: str = "cpu"
         self._init_omniparser()
+
+    def _status(self, message: str) -> None:
+        if not self._status_callback:
+            return
+        try:
+            self._status_callback(message)
+        except Exception:
+            pass
 
     def _init_omniparser(self) -> None:
         try:
@@ -45,7 +54,9 @@ class OmniParserEngine:
                 raise FileNotFoundError(f"Caption model folder not found: {caption_path}")
 
             print("OmniParser detected")
+            self._status("OmniParser detected")
             print("Loading models...")
+            self._status("Loading models...")
             try:
                 import torch
                 self._device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -54,8 +65,10 @@ class OmniParserEngine:
             print(f"OmniParser device: {self._device}")
 
             start = time.time()
+            self._status("YOLO loading...")
             yolo_model = get_yolo_model(model_path=yolo_path, device=self._device)
             print(f"YOLO loaded ({time.time() - start:.1f}s)")
+            self._status("YOLO loaded")
 
             start = time.time()
             caption_model_processor = get_caption_model_processor(
@@ -64,6 +77,7 @@ class OmniParserEngine:
                 device=self._device,
             )
             print(f"Florence2 loaded ({time.time() - start:.1f}s)")
+            self._status("Florence2 loaded")
 
             self._omni = {
                 "check_ocr_box": check_ocr_box,
@@ -74,33 +88,22 @@ class OmniParserEngine:
             }
             self.omni_available = True
             print("OmniParser ready")
+            self._status("OmniParser ready")
         except Exception as exc:
             print(f"OmniParser init failed: {exc}")
+            self._status(f"OmniParser init failed: {exc}")
             traceback.print_exc()
             raise
 
-    def capture_screen_excluding_overlay(self, overlay_hwnd=None) -> Optional[Image.Image]:
-        """Capture the full desktop and crop out the overlay strip.
-
-        Capture priority:
-          1. Full desktop via win32api  — sees all windows, taskbar, desktop
-          2. PIL ImageGrab.grab()       — reliable cross-session fallback
-          3. Foreground window only     — original behaviour, last resort
-
-        After capture the overlay column is cropped out so OmniParser never
-        sees it, preventing the overlay buttons from being detected as targets.
-        """
-        screenshot = (
-            self._capture_fullscreen_win32()
-            or self._capture_fullscreen_imagegrab()
-            or self._capture_foreground_window(overlay_hwnd)
-        )
+    def capture_main_monitor(self) -> Optional[Image.Image]:
+        """Capture only DISPLAY1 for parsing."""
+        screenshot = self._capture_fullscreen_imagegrab()
 
         if screenshot is None:
             print("[Capture] All capture methods failed.")
             return None
 
-        return self._crop_out_overlay(screenshot)
+        return screenshot
 
     # ------------------------------------------------------------------
     # Capture backends
@@ -153,88 +156,16 @@ class OmniParserEngine:
             return None
 
     def _capture_fullscreen_imagegrab(self) -> Optional[Image.Image]:
-        """Capture the full primary screen using PIL ImageGrab."""
+        """Capture DISPLAY1 only using a fixed bbox."""
         try:
-            img = ImageGrab.grab(all_screens=True)
+            bbox = (0, 0, 1920, 1080)
+            img = ImageGrab.grab(bbox=bbox)
             img = img.convert("RGB")
-            print(f"[Capture] Full desktop via ImageGrab {img.size}")
+            print(f"[Capture] Main monitor via ImageGrab bbox={bbox} size={img.size}")
             return img
         except Exception as exc:
             print(f"[Capture] ImageGrab fallback failed: {exc}")
             return None
-
-    def _capture_foreground_window(self, overlay_hwnd=None) -> Optional[Image.Image]:
-        """Original foreground-window-only capture, kept as last resort."""
-        try:
-            import win32gui
-            import win32ui
-            import win32con
-
-            hwnd = win32gui.GetForegroundWindow()
-
-            if overlay_hwnd and hwnd == overlay_hwnd:
-                hwnd = win32gui.GetWindow(hwnd, win32con.GW_HWNDNEXT)
-            if overlay_hwnd and hwnd == overlay_hwnd:
-                hwnd = win32gui.GetWindow(hwnd, win32con.GW_HWNDPREV)
-
-            left, top, right, bottom = win32gui.GetWindowRect(hwnd)
-            width  = right - left
-            height = bottom - top
-
-            hwnd_dc = win32gui.GetWindowDC(hwnd)
-            mfc_dc  = win32ui.CreateDCFromHandle(hwnd_dc)
-            save_dc = mfc_dc.CreateCompatibleDC()
-
-            bitmap = win32ui.CreateBitmap()
-            bitmap.CreateCompatibleBitmap(mfc_dc, width, height)
-            save_dc.SelectObject(bitmap)
-            save_dc.BitBlt((0, 0), (width, height), mfc_dc, (0, 0), win32con.SRCCOPY)
-
-            bmp_info = bitmap.GetInfo()
-            bmp_str  = bitmap.GetBitmapBits(True)
-
-            img = Image.frombuffer(
-                "RGB",
-                (bmp_info["bmWidth"], bmp_info["bmHeight"]),
-                bmp_str, "raw", "BGRX", 0, 1,
-            )
-
-            win32gui.DeleteObject(bitmap.GetHandle())
-            save_dc.DeleteDC()
-            mfc_dc.DeleteDC()
-            win32gui.ReleaseDC(hwnd, hwnd_dc)
-
-            print(f"[Capture] Foreground window fallback ({width}x{height})")
-            return img
-
-        except Exception as exc:
-            print(f"[Capture] Foreground window capture failed: {exc}")
-            traceback.print_exc()
-            return None
-
-    # ------------------------------------------------------------------
-    # Overlay crop
-    # ------------------------------------------------------------------
-
-    def _crop_out_overlay(self, img: Image.Image) -> Image.Image:
-        """Remove the overlay column so OmniParser never sees it.
-
-        Crops based on overlay_position and overlay_width from config,
-        returning the remaining desktop area.  If the image is smaller
-        than expected the original is returned unchanged.
-        """
-        w, h = img.size
-        ow = self.config.overlay_width
-        pos = self.config.overlay_position.lower()
-
-        if pos == "right":
-            crop_box = (0, 0, max(0, w - ow), h)
-        else:  # left
-            crop_box = (min(ow, w), 0, w, h)
-
-        cropped = img.crop(crop_box)
-        print(f"[Capture] Cropped overlay ({pos}): {w}x{h} -> {cropped.size[0]}x{cropped.size[1]}")
-        return cropped
 
     def capture_specific_window(self, hwnd: int) -> Optional[Image.Image]:
         """Capture only the window identified by hwnd.
@@ -324,12 +255,12 @@ class OmniParserEngine:
             )
             ocr_text, ocr_bbox = ocr_bbox_result
 
-            box_overlay_ratio = img_w / 3200
+            box_ratio = img_w / 3200
             draw_bbox_config = {
-                "text_scale": 0.8 * box_overlay_ratio,
-                "text_thickness": max(int(2 * box_overlay_ratio), 1),
-                "text_padding": max(int(3 * box_overlay_ratio), 1),
-                "thickness": max(int(3 * box_overlay_ratio), 1),
+                "text_scale": 0.8 * box_ratio,
+                "text_thickness": max(int(2 * box_ratio), 1),
+                "text_padding": max(int(3 * box_ratio), 1),
+                "thickness": max(int(3 * box_ratio), 1),
             }
 
             labeled_b64, label_coordinates, parsed_content_list = get_som_labeled_img(
@@ -378,7 +309,6 @@ class OmniParserEngine:
         img_w: int,
         img_h: int,
     ) -> List[DetectedElement]:
-        screen_x_offset = self.config.overlay_width if self.config.overlay_position.lower() == "left" else 0
         seen_names = set()
         elements: List[DetectedElement] = []
 
@@ -411,8 +341,8 @@ class OmniParserEngine:
                 elements.append(
                     DetectedElement(
                         name=name,
-                        bbox=(x1 + screen_x_offset, y1, x2 + screen_x_offset, y2),
-                        center=(cx + screen_x_offset, cy),
+                        bbox=(x1, y1, x2, y2),
+                        center=(cx, cy),
                         interactive=interactive,
                         element_type=element_type,
                         source=item.get("source"),
@@ -468,3 +398,5 @@ class OmniParserEngine:
             score += 25
 
         return score
+
+
