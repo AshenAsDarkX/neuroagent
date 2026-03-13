@@ -1,0 +1,21 @@
+{
+  "survivors_count": 67,
+  "raw_response": "",
+  "chosen_indices": [],
+  "final_actions": [
+    "Click Copy",
+    "Click Paste",
+    "Click Search Function",
+    "Navigation - Out of view",
+    "Click Main Py",
+    "Click Controller Py",
+    "Click Debug_Writer Py",
+    "Click App_Config Py",
+    "Click Overlay_Uipy",
+    "Click Current File",
+    "Click Con",
+    "Click Main",
+    "Click Ranking-Py",
+    "Click Master"
+  ]
+}

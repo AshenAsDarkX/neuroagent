@@ -1,0 +1,36 @@
+{
+  "survivors_count": 16,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"click on This PC\", \"target\": 0},\n    {\"goal\": \"click on ENG US\", \"target\": 1},\n    {\"goal\": \"click on Control Panel\", \"target\": 2},\n    {\"goal\": \"click on Qx\", \"target\": 3},\n    {\"goal\": \"click on Google Chrome\", \"target\": 4},\n    {\"goal\": \"click on Notifications\", \"target\": 5},\n    {\"goal\": \"click on Windows Security\", \"target\": 6},\n    {\"goal\": \"click on Hyperlink\", \"target\": 7},\n    {\"goal\": \"click on Corel Paint Paint\", \"target\": 8},\n    {\"goal\": \"click on Windows\", \"target\": 9},\n    {\"goal\": \"click on Gallery\", \"target\": 10},\n    {\"goal\": \"click on Spotify\", \"target\": 11},\n    {\"goal\": \"click on Pencil\", \"target\": 12},\n    {\"goal\": \"click on WiFi\", \"target\": 13},\n    {\"goal\": \"click on Send\", \"target\": 14},\n    {\"goal\": \"click on M0,0L9,0 4.5,5z\", \"target\": 15}\n  ]\n}",
+  "chosen_indices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13
+  ],
+  "final_actions": [
+    "click on This PC",
+    "click on ENG US",
+    "click on Control Panel",
+    "click on Qx",
+    "click on Google Chrome",
+    "click on Notifications",
+    "click on Windows Security",
+    "click on Hyperlink",
+    "click on Corel Paint Paint",
+    "click on Windows",
+    "click on Gallery",
+    "click on Spotify",
+    "click on Pencil",
+    "click on WiFi"
+  ]
+}

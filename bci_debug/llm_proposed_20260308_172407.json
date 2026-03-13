@@ -1,0 +1,36 @@
+{
+  "survivors_count": 20,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Close\", \"target\": 0},\n    {\"goal\": \"Next\", \"target\": 1},\n    {\"goal\": \"Unlock Pro\", \"target\": 4},\n    {\"goal\": \"neuroagent\", \"target\": 3},\n    {\"goal\": \"neuroagent-V6\", \"target\": 6},\n    {\"goal\": \"agent_planner py\", \"target\": 7},\n    {\"goal\": \"Project\", \"target\": 8},\n    {\"goal\": \"Current File\", \"target\": 9},\n    {\"goal\": \"main\", \"target\": 10},\n    {\"goal\": \"agent_state py\", \"target\": 11},\n    {\"goal\": \"app_config:\", \"target\": 12},\n    {\"goal\": \"modelspy\", \"target\": 13},\n    {\"goal\": \"goal_evaluator py\", \"target\": 14},\n    {\"goal\": \"Run\", \"target\": 15},\n    {\"goal\": \"Accessibility\", \"target\": 16},\n    {\"goal\": \"Toggle\", \"target\": 17},\n    {\"goal\": \"Settings\", \"target\": 19},\n    {\"goal\": \"Justified\", \"target\": 20},\n    {\"goal\": \"Currency\", \"target\": 21}\n  ]\n}",
+  "chosen_indices": [
+    0,
+    1,
+    4,
+    3,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "final_actions": [
+    "Close",
+    "Next",
+    "Unlock Pro",
+    "neuroagent",
+    "neuroagent-V6",
+    "agent_planner py",
+    "Project",
+    "Current File",
+    "main",
+    "agent_state py",
+    "app_config:",
+    "modelspy",
+    "goal_evaluator py",
+    "Run"
+  ]
+}

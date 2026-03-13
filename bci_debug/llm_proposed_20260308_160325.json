@@ -1,0 +1,36 @@
+{
+  "survivors_count": 20,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"click Next\", \"target\": 1},\n    {\"goal\": \"click Open\", \"target\": 2},\n    {\"goal\": \"click Close\", \"target\": 3},\n    {\"goal\": \"click Daily Mix 1\", \"target\": 4},\n    {\"goal\": \"click PMONK, phonk\", \"target\": 5},\n    {\"goal\": \"click BABYMONSTE\", \"target\": 6},\n    {\"goal\": \"click Daily Mix 2 D'E\", \"target\": 7},\n    {\"goal\": \"click D#RKM ON BLOOD\", \"target\": 8},\n    {\"goal\": \"click This BABYMONST _\", \"target\": 9},\n    {\"goal\": \"click The only Majed\", \"target\": 10},\n    {\"goal\": \"click Mandodari\", \"target\": 11},\n    {\"goal\": \"click DailyMixl\", \"target\": 12},\n    {\"goal\": \"click Home\", \"target\": 13},\n    {\"goal\": \"click Spotify\", \"target\": 14},\n    {\"goal\": \"click Heart\", \"target\": 15},\n    {\"goal\": \"click PowerPoint\", \"target\": 16},\n    {\"goal\": \"click Google Chrome\", \"target\": 17},\n    {\"goal\": \"click Code\", \"target\": 18},\n    {\"goal\": \"click folder\", \"target\": 19},\n    {\"goal\": \"click Play\", \"target\": 20}\n  ]\n}",
+  "chosen_indices": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14
+  ],
+  "final_actions": [
+    "click Next",
+    "click Open",
+    "click Close",
+    "click Daily Mix 1",
+    "click PMONK, phonk",
+    "click BABYMONSTE",
+    "click Daily Mix 2 D'E",
+    "click D#RKM ON BLOOD",
+    "click This BABYMONST _",
+    "click The only Majed",
+    "click Mandodari",
+    "click DailyMixl",
+    "click Home",
+    "click Spotify"
+  ]
+}

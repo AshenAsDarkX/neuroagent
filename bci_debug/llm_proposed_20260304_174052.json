@@ -1,0 +1,15 @@
+{
+  "survivors_count": 8,
+  "raw_response": "{\n   \"name\": \"Open Chrome\",\n   \"name\": \"Search\",\n   \"name\": \"Downloads\",\n   \"name\": \"Open Downloads\",\n   \"name\": \"Spotify\",\n   \"name\": \"Google Chrome\"\n}",
+  "chosen_indices": [],
+  "final_actions": [
+    "Click Search",
+    "Click Powerpoint",
+    "Click Save",
+    "Open Chrome",
+    "Open Start",
+    "Open Spotify",
+    "Open Edge",
+    "Ink Color Color Yellow"
+  ]
+}

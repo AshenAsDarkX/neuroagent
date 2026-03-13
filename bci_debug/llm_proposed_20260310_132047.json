@@ -1,0 +1,21 @@
+{
+  "survivors_count": 20,
+  "raw_response": "",
+  "chosen_indices": [],
+  "final_actions": [
+    "Click Close",
+    "Click Next",
+    "Click Chat",
+    "Click Eng Us",
+    "Click Acer",
+    "Click Other Favorites",
+    "Click About Us",
+    "Click Aibt",
+    "Click Adobe Acrobat",
+    "Show on startup",
+    "Open Chrome",
+    "Click Decrease",
+    "Click Powerpoint",
+    "Click Expand"
+  ]
+}

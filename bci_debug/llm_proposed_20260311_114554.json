@@ -1,0 +1,36 @@
+{
+  "survivors_count": 14,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"click ENG US\", \"target\": 0},\n    {\"goal\": \"click This PC\", \"target\": 1},\n    {\"goal\": \"click Control Panel\", \"target\": 2},\n    {\"goal\": \"click Qx\", \"target\": 3},\n    {\"goal\": \"click Google Chrome\", \"target\": 4},\n    {\"goal\": \"click Ink Pro\", \"target\": 5},\n    {\"goal\": \"click Save\", \"target\": 6},\n    {\"goal\": \"click PowerPoint\", \"target\": 7},\n    {\"goal\": \"click Windows\", \"target\": 8},\n    {\"goal\": \"click Spotify\", \"target\": 9},\n    {\"goal\": \"click Redo\", \"target\": 10},\n    {\"goal\": \"click WiFi\", \"target\": 11},\n    {\"goal\": \"click Send\", \"target\": 12},\n    {\"goal\": \"click M0,0L9,0 4.5,5z\", \"target\": 13}\n  ]\n}",
+  "chosen_indices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13
+  ],
+  "final_actions": [
+    "click ENG US",
+    "click This PC",
+    "click Control Panel",
+    "click Qx",
+    "click Google Chrome",
+    "click Ink Pro",
+    "click Save",
+    "click PowerPoint",
+    "click Windows",
+    "click Spotify",
+    "click Redo",
+    "click WiFi",
+    "click Send",
+    "click M0,0L9,0 4.5,5z"
+  ]
+}

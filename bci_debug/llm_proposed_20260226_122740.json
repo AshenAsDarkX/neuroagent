@@ -1,0 +1,21 @@
+{
+  "survivors_count": 42,
+  "raw_response": "{\n   \"title: Search\":{\n    \"idx\": 0,\n    \"name\": \"Search\"\n  },\n   \"title: Open Chrome\":{\n    \"idx\": 10,\n    \"name\": \"Google Chrome\"\n  },\n   \"title: Open Downloads\":{\n    \"idx\": 16,\n    \"name\": \"Downloads\"\n  },\n   \"title: Copy\":{\n    \"idx\": 1,\n    \"name\": \"Copy\"\n  },\n   \"title: Delete\":{\n    \"idx\": 3,\n    \"name\": \"Delete\"\n  }\n}",
+  "chosen_indices": [],
+  "final_actions": [
+    "Click Search",
+    "Click Copy",
+    "Click Next",
+    "Click Delete",
+    "About the artist",
+    "Click Heart",
+    "Click Home",
+    "Click Animal Crossing",
+    "Click More Options",
+    "Open Chrome",
+    "Click Deeeeee",
+    "Click Pycharm",
+    "Open Settings",
+    "Click Bookmark"
+  ]
+}

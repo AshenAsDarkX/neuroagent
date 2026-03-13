@@ -1,0 +1,32 @@
+{
+  "survivors_count": 63,
+  "raw_response": "{\"chosen\":[18,31,41,42,43,44,47,48,50,51,56,57]}",
+  "chosen_indices": [
+    18,
+    31,
+    41,
+    42,
+    43,
+    44,
+    47,
+    48,
+    50,
+    51,
+    56,
+    57
+  ],
+  "final_actions": [
+    "Click Home",
+    "Open Chrome",
+    "Click Forward",
+    "Click Up",
+    "Click More Options",
+    "Click Rounded",
+    "Click Movies",
+    "Click Toggle Document",
+    "Click Mute",
+    "Click Omniparse_Agentic_Hybrid_Bcipy",
+    "Click Bci_Agent_Vs_Omni_Optimized Py",
+    "Click Agentic_Omniparse_Bci_Hybridpy"
+  ]
+}

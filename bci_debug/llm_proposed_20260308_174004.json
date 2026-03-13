@@ -1,0 +1,36 @@
+{
+  "survivors_count": 20,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"click Next\", \"target\": 1},\n    {\"goal\": \"click Close\", \"target\": 2},\n    {\"goal\": \"click Daily Mix 1\", \"target\": 3},\n    {\"goal\": \"click Theonly Majed\", \"target\": 4},\n    {\"goal\": \"click PMONK, phonk\", \"target\": 5},\n    {\"goal\": \"click IEMUP\", \"target\": 6},\n    {\"goal\": \"click Daily Mix 2 D'E\", \"target\": 7},\n    {\"goal\": \"click This Is BABYMONST.\", \"target\": 8},\n    {\"goal\": \"click Mandodari\", \"target\": 9},\n    {\"goal\": \"click AshenAs DarkX\", \"target\": 10},\n    {\"goal\": \"click Home\", \"target\": 11},\n    {\"goal\": \"click Heart\", \"target\": 12},\n    {\"goal\": \"click Spotify\", \"target\": 13},\n    {\"goal\": \"click Save\", \"target\": 14},\n    {\"goal\": \"click Google Chrome\", \"target\": 15},\n    {\"goal\": \"click Refresh\", \"target\": 16},\n    {\"goal\": \"click PowerPoint\", \"target\": 17},\n    {\"goal\": \"click Minimize\", \"target\": 18},\n    {\"goal\": \"click More options\", \"target\": 19},\n    {\"goal\": \"click Play\", \"target\": 20}\n  ]\n}",
+  "chosen_indices": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14
+  ],
+  "final_actions": [
+    "click Next",
+    "click Close",
+    "click Daily Mix 1",
+    "click Theonly Majed",
+    "click PMONK, phonk",
+    "click IEMUP",
+    "click Daily Mix 2 D'E",
+    "click This Is BABYMONST.",
+    "click Mandodari",
+    "click AshenAs DarkX",
+    "click Home",
+    "click Heart",
+    "click Spotify",
+    "click Save"
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "survivors_count": 41,
+  "raw_response": "",
+  "chosen_indices": [],
+  "final_actions": [
+    "Click Search Chats",
+    "Click New Chat",
+    "Click Pyramid View",
+    "Click New Project",
+    "Click Close",
+    "Click Codex",
+    "Click Gpts",
+    "Click Apps",
+    "Click Images",
+    "Click Projects",
+    "Dark X Go",
+    "Click Your Chats",
+    "Click Try Copilot",
+    "Click Chatgpt"
+  ]
+}

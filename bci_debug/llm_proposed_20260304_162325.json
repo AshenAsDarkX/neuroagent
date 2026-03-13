@@ -1,0 +1,12 @@
+{
+  "survivors_count": 33,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Open Chrome\", \"target\": 0},\n    {\"goal\": \"Open Spotify\", \"target\": 1}\n  ]\n}",
+  "chosen_indices": [
+    0,
+    1
+  ],
+  "final_actions": [
+    "Open Chrome",
+    "Open Spotify"
+  ]
+}

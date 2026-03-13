@@ -1,0 +1,21 @@
+{
+  "survivors_count": 46,
+  "raw_response": "{\n   \"title\": \"Open Spotify\",\n   \"name\": \"Spotify\",\n   \"action_label\": \"Open Spotify\",\n   \"type\": \"Application\",\n   \"priority\": \"HIGH_PRIORITY\"\n}",
+  "chosen_indices": [],
+  "final_actions": [
+    "Click Search",
+    "Click Open",
+    "Click Close",
+    "Click Next",
+    "Click New Addition",
+    "DISCOVER WEEKLY Your shortcu",
+    "Daily Mix 1",
+    "Click Pmdnk Phonk",
+    "Click Babymonste",
+    "Click Mandodari",
+    "Daily Mix 2 piO",
+    "Click Iemup",
+    "Click Drip Babymonster",
+    "Click Sheesh Babymonster"
+  ]
+}

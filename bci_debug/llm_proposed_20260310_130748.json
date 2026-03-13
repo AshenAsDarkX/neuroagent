@@ -1,0 +1,19 @@
+{
+  "survivors_count": 12,
+  "raw_response": "",
+  "chosen_indices": [],
+  "final_actions": [
+    "Click Eng Us",
+    "Open Chrome",
+    "Open Spotify",
+    "Open Ink Pro",
+    "Open Terminal",
+    "Click Wifi",
+    "Click Gallery",
+    "Open Start",
+    "Click Curve",
+    "Click Sound",
+    "Open Edge",
+    "Click Pyramid View"
+  ]
+}

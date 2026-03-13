@@ -1,0 +1,20 @@
+{
+  "survivors_count": 8,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Open Chrome\", \"target\": 3},\n    {\"goal\": \"Open Spotify\", \"target\": 4}\n  ]\n}",
+  "chosen_indices": [
+    3,
+    4,
+    5,
+    6,
+    0,
+    7
+  ],
+  "final_actions": [
+    "Open Chrome",
+    "Open Spotify",
+    "Click Pycharm",
+    "Open Start",
+    "Click Search",
+    "Open Edge"
+  ]
+}

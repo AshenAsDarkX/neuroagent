@@ -1,0 +1,21 @@
+{
+  "survivors_count": 15,
+  "raw_response": "",
+  "chosen_indices": [],
+  "final_actions": [
+    "Click Search",
+    "Click Close",
+    "Click Bci Manual",
+    "Click More Options",
+    "Click Bci",
+    "Open Chrome",
+    "Click Gallery",
+    "Open Spotify",
+    "Click Pycharm",
+    "Open Start",
+    "Click Maximize",
+    "Click Taking Screenshot__",
+    "Open Edge",
+    "Ink Color Color Yellow"
+  ]
+}

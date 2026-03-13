@@ -1,0 +1,36 @@
+{
+  "survivors_count": 20,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Close\", \"target\": 1},\n    {\"goal\": \"Download Article\", \"target\": 3},\n    {\"goal\": \"PRO\", \"target\": 4},\n    {\"goal\": \"School\", \"target\": 5},\n    {\"goal\": \"RANDOM\", \"target\": 6},\n    {\"goal\": \"her exe pr plan\", \"target\": 7},\n    {\"goal\": \"Bookmarks\", \"target\": 8},\n    {\"goal\": \"SCOSCO19C CW viv_\", \"target\": 9},\n    {\"goal\": \"EXPLORE\", \"target\": 10},\n    {\"goal\": \"Elementor Google_\", \"target\": 11},\n    {\"goal\": \"LOG IN\", \"target\": 12},\n    {\"goal\": \"BRAND GUIDELINES_\", \"target\": 13},\n    {\"goal\": \"EDIT\", \"target\": 14},\n    {\"goal\": \"QUIZZES\", \"target\": 15},\n    {\"goal\": \"History Compute_\", \"target\": 16},\n    {\"goal\": \"wikiHow\", \"target\": 17},\n    {\"goal\": \"do anything:\", \"target\": 18},\n    {\"goal\": \"Reload\", \"target\": 19},\n    {\"goal\": \"Forward\", \"target\": 20},\n    {\"goal\": \"Properties\", \"target\": 21}\n  ]\n}",
+  "chosen_indices": [
+    1,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "final_actions": [
+    "Close",
+    "Download Article",
+    "PRO",
+    "School",
+    "RANDOM",
+    "her exe pr plan",
+    "Bookmarks",
+    "SCOSCO19C CW viv_",
+    "EXPLORE",
+    "Elementor Google_",
+    "LOG IN",
+    "BRAND GUIDELINES_",
+    "EDIT",
+    "QUIZZES"
+  ]
+}

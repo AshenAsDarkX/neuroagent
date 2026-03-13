@@ -1,0 +1,34 @@
+{
+  "survivors_count": 14,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"open settings\", \"target\": 0},\n    {\"goal\": \"open This PC\", \"target\": 1},\n    {\"goal\": \"open Control Panel\", \"target\": 2},\n    {\"goal\": \"open Qx\", \"target\": 3},\n    {\"goal\": \"open Google Chrome\", \"target\": 4},\n    {\"goal\": \"open PowerPoint\", \"target\": 5},\n    {\"goal\": \"open Spotify\", \"target\": 6},\n    {\"goal\": \"open Windows\", \"target\": 7},\n    {\"goal\": \"open Pencil\", \"target\": 8},\n    {\"goal\": \"open Redo\", \"target\": 9},\n    {\"goal\": \"open WiFi\", \"target\": 10},\n    {\"goal\": \"open Send\", \"target\": 11},\n    {\"goal\": \"open M0,0L9,0 4.5,5z\", \"target\": 12}\n  ]\n}",
+  "chosen_indices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ],
+  "final_actions": [
+    "open settings",
+    "open This PC",
+    "open Control Panel",
+    "open Qx",
+    "open Google Chrome",
+    "open PowerPoint",
+    "open Spotify",
+    "open Windows",
+    "open Pencil",
+    "open Redo",
+    "open WiFi",
+    "open Send",
+    "open M0,0L9,0 4.5,5z"
+  ]
+}

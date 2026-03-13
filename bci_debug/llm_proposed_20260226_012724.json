@@ -1,0 +1,18 @@
+{
+  "survivors_count": 63,
+  "raw_response": "{\"chosen\":[17,39,58,29,52]}",
+  "chosen_indices": [
+    17,
+    39,
+    58,
+    29,
+    52
+  ],
+  "final_actions": [
+    "Click Run",
+    "Click Refresh",
+    "Click Minimize",
+    "Click Save",
+    "Open Terminal"
+  ]
+}

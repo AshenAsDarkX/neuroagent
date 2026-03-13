@@ -1,0 +1,20 @@
+{
+  "survivors_count": 13,
+  "raw_response": "{\n   \"name\": \"Search\",\n   \"name\": \"Copy\",\n   \"name\": \"Open Chrome\",\n   \"name\": \"Downloads\",\n   \"name\": \"Spotify\"\n}",
+  "chosen_indices": [],
+  "final_actions": [
+    "Click Search",
+    "Click Copy",
+    "Click Powerpoint",
+    "Open Settings",
+    "Open Chrome",
+    "Click Gallery",
+    "Open M365",
+    "Click Groups",
+    "Open Start",
+    "Open Spotify",
+    "Click Pencil",
+    "Open Edge",
+    "Click M0,0L9,0 4.5,5Z"
+  ]
+}

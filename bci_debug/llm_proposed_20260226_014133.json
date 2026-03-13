@@ -1,0 +1,17 @@
+{
+  "survivors_count": 10,
+  "raw_response": "{\"chosen\":[8,0,6,11,2]}",
+  "chosen_indices": [
+    8,
+    0,
+    6,
+    11,
+    2
+  ],
+  "final_actions": [
+    "Open Start",
+    "Click Search",
+    "Open Chrome",
+    "Click Pyramid View"
+  ]
+}

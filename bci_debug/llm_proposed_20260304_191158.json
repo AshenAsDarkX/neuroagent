@@ -1,0 +1,21 @@
+{
+  "survivors_count": 35,
+  "raw_response": "",
+  "chosen_indices": [],
+  "final_actions": [
+    "Click Close",
+    "Click New Addition",
+    "Click Delete",
+    "Click Next",
+    "Click Search Function",
+    "Click Recently Played",
+    "Click Queue",
+    "Click Home",
+    "Click Mute",
+    "Click Heart",
+    "Open Spotify",
+    "Click Folder",
+    "Click Pycharm",
+    "Open Chrome"
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "survivors_count": 44,
+  "raw_response": "{\n   \"While Spotify is not in the list, it's a high priority action for many users.\":\n1.13\n  \t}",
+  "chosen_indices": [],
+  "final_actions": [
+    "Click Search",
+    "Click Copy",
+    "Click Next",
+    "Click New Project",
+    "About the artist",
+    "Click Iheonlymajed",
+    "Click Heart",
+    "Click Play Video",
+    "Click Home",
+    "Click Animal",
+    "Open Chrome",
+    "Click More Options",
+    "Click Deeeeee",
+    "Click Pycharm"
+  ]
+}

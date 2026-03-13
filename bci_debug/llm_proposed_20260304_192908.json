@@ -1,0 +1,36 @@
+{
+  "survivors_count": 41,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Click Search\", \"target\": 0},\n    {\"goal\": \"Click Open\", \"target\": 1},\n    {\"goal\": \"Click Close\", \"target\": 2},\n    {\"goal\": \"Click Next\", \"target\": 3},\n    {\"goal\": \"Click New Addition\", \"target\": 4},\n    {\"goal\": \"Click PMONK, phonk\", \"target\": 7},\n    {\"goal\": \"Click Daily Mix 2\", \"target\": 8},\n    {\"goal\": \"Click BABYMONSTE\", \"target\": 9},\n    {\"goal\": \"Click Daily Mix 1\", \"target\": 10},\n    {\"goal\": \"Click Mandodari\", \"target\": 11},\n    {\"goal\": \"Click The only Majed\", \"target\": 12},\n    {\"goal\": \"Click Queue\", \"target\": 13},\n    {\"goal\": \"Click Recently played\", \"target\": 14},\n    {\"goal\": \"Click 0:00\", \"target\": 15},\n    {\"goal\": \"Click Home\", \"target\": 16},\n    {\"goal\": \"Click Spotify\", \"target\": 17},\n    {\"goal\": \"Click Heart\", \"target\": 18},\n    {\"goal\": \"Click Google Chrome\", \"target\": 19},\n    {\"goal\": \"Click PyCharm\", \"target\": 20},\n    {\"goal\": \"Click folder\", \"target\": 21},\n    {\"goal\": \"Click Increase\", \"target\": 22},\n    {\"goal\": \"Click Minimize\", \"target\": 23},\n    {\"goal\": \"Click Fill\", \"target\": 24},\n    {\"goal\": \"Click Notifications\", \"target\": 25},\n    {\"goal\": \"Click Line\", \"target\": 26},\n    {\"goal\": \"Click Shuffle\", \"target\": 27},\n    {\"goal\": \"Click Maximize\", \"target\": 28},\n    {\"goal\": \"Click More options\", \"target\": 29},\n    {\"goal\": \"Click Pencil\", \"target\": 30},\n    {\"goal\": \"Click Windows.\", \"target\": 31},\n    {\"goal\": \"Click Triangle\", \"target\": 32},\n    {\"goal\": \"Click Hide\", \"target\": 33},\n    {\"goal\": \"Click Norton\", \"target\": 34},\n    {\"goal\": \"Click a&t video game\", \"target\": 35},\n    {\"goal\": \"Click Sanda Mithuri Kasun Kalhara\", \"target\": 37},\n    {\"goal\": \"Click Yuki Navaratne Radio\", \"target\": 38},\n    {\"goal\": \"Click This Is BABYMONST _\", \"target\": 39},\n    {\"goal\": \"Click Microsoft Edge browser\", \"target\": 40},\n    {\"goal\": \"Click Rounded rectangular callout\", \"target\": 41},\n    {\"goal\": \"Click 28, September, 2024\", \"target\": 42},\n    {\"goal\": \"Click Marathondi JANANA Shehara Alaha_\", \"target\": 44}\n  ]\n}",
+  "chosen_indices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "final_actions": [
+    "Click Search",
+    "Click Open",
+    "Click Close",
+    "Click Next",
+    "Click New Addition",
+    "Click PMONK, phonk",
+    "Click Daily Mix 2",
+    "Click BABYMONSTE",
+    "Click Daily Mix 1",
+    "Click Mandodari",
+    "Click The only Majed",
+    "Click Queue",
+    "Click Recently played",
+    "Click 0:00"
+  ]
+}

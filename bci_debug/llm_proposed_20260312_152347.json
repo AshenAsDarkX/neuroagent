@@ -1,0 +1,36 @@
+{
+  "survivors_count": 14,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"click on This PC\", \"target\": 0},\n    {\"goal\": \"click on Control Panel\", \"target\": 1},\n    {\"goal\": \"click on ENG US\", \"target\": 2},\n    {\"goal\": \"click on Spotify\", \"target\": 3},\n    {\"goal\": \"click on Save\", \"target\": 4},\n    {\"goal\": \"click on Google Chrome\", \"target\": 5},\n    {\"goal\": \"click on PowerPoint\", \"target\": 6},\n    {\"goal\": \"click on Toggle\", \"target\": 7},\n    {\"goal\": \"click on Windows\", \"target\": 8},\n    {\"goal\": \"click on Pencil\", \"target\": 9},\n    {\"goal\": \"click on Toggie\", \"target\": 10},\n    {\"goal\": \"click on WiFi\", \"target\": 11},\n    {\"goal\": \"click on Mute\", \"target\": 12},\n    {\"goal\": \"click on M0,0L9,0 4.5,5z\", \"target\": 13}\n  ]\n}",
+  "chosen_indices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13
+  ],
+  "final_actions": [
+    "click on This PC",
+    "click on Control Panel",
+    "click on ENG US",
+    "click on Spotify",
+    "click on Save",
+    "click on Google Chrome",
+    "click on PowerPoint",
+    "click on Toggle",
+    "click on Windows",
+    "click on Pencil",
+    "click on Toggie",
+    "click on WiFi",
+    "click on Mute",
+    "click on M0,0L9,0 4.5,5z"
+  ]
+}

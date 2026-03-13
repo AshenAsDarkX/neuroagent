@@ -1,0 +1,36 @@
+{
+  "survivors_count": 20,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"click Next\", \"target\": 0},\n    {\"goal\": \"click main\", \"target\": 1},\n    {\"goal\": \"click data\", \"target\": 3},\n    {\"goal\": \"click agent_planne\", \"target\": 4},\n    {\"goal\": \"click agent_state py\", \"target\": 5},\n    {\"goal\": \"click bci_debug\", \"target\": 6},\n    {\"goal\": \"click Project\", \"target\": 7},\n    {\"goal\": \"click Current File\", \"target\": 8},\n    {\"goal\": \"click Codex\", \"target\": 9},\n    {\"goal\": \"click UTF-8\", \"target\": 10},\n    {\"goal\": \"click goal_evaluatorpy\", \"target\": 11},\n    {\"goal\": \"click C:IUsersil\", \"target\": 12},\n    {\"goal\": \"click spaces\", \"target\": 13},\n    {\"goal\": \"click Inkiting\", \"target\": 14},\n    {\"goal\": \"click PyCharm\", \"target\": 19}\n  ]\n}",
+  "chosen_indices": [
+    0,
+    1,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14
+  ],
+  "final_actions": [
+    "click Next",
+    "click main",
+    "click data",
+    "click agent_planne",
+    "click agent_state py",
+    "click bci_debug",
+    "click Project",
+    "click Current File",
+    "click Codex",
+    "click UTF-8",
+    "click goal_evaluatorpy",
+    "click C:IUsersil",
+    "click spaces",
+    "click Inkiting"
+  ]
+}

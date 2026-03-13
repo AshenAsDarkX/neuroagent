@@ -1,0 +1,21 @@
+{
+  "survivors_count": 35,
+  "raw_response": "{\n   \"name\": \"Search\",\n   \"name\": \"Open Chrome\",\n   \"name\": \"Save\",\n   \"name\": \"Microsoft Edge browser\",\n   \"name\": \"Open Downloads\",\n   \"name\": \"Copy\",\n   \"name\": \"Refresh or reload.\",\n   \"name\": \"Forward\",\n   \"name\": \"New Chat\",\n   \"name\": \"Add\"\n}",
+  "chosen_indices": [],
+  "final_actions": [
+    "Click Search",
+    "Click New Chat",
+    "Click Copy",
+    "Click Qwen2.53B",
+    "Click This Week",
+    "Open Settings",
+    "Click Icon. Content",
+    "Click Bbox:",
+    "Click 10) ;",
+    "Open Start",
+    "Click Gumby",
+    "Click Pycharm",
+    "Click Save",
+    "Open M365"
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "survivors_count": 20,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Close\", \"target\": 1},\n    {\"goal\": \"Next\", \"target\": 2},\n    {\"goal\": \"D#RKM ON BLOOD\", \"target\": 3},\n    {\"goal\": \"Follow\", \"target\": 4},\n    {\"goal\": \"MEMUP PSYCHO 3.15\", \"target\": 5},\n    {\"goal\": \"Daily Mix 1\", \"target\": 6},\n    {\"goal\": \"Home\", \"target\": 7},\n    {\"goal\": \"Play video.\", \"target\": 8},\n    {\"goal\": \"Spotify\", \"target\": 9},\n    {\"goal\": \"Heart\", \"target\": 10},\n    {\"goal\": \"Google Chrome\", \"target\": 11},\n    {\"goal\": \"Shuffle\", \"target\": 12},\n    {\"goal\": \"Notifications\", \"target\": 13},\n    {\"goal\": \"folder\", \"target\": 14},\n    {\"goal\": \"PowerPoint\", \"target\": 15},\n    {\"goal\": \"Maximize\", \"target\": 16},\n    {\"goal\": \"Toggle Terminal\", \"target\": 17},\n    {\"goal\": \"Windows\", \"target\": 18},\n    {\"goal\": \"Pencil\", \"target\": 19},\n    {\"goal\": \"Back\", \"target\": 21}\n  ]\n}",
+  "chosen_indices": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14
+  ],
+  "final_actions": [
+    "Close",
+    "Next",
+    "D#RKM ON BLOOD",
+    "Follow",
+    "MEMUP PSYCHO 3.15",
+    "Daily Mix 1",
+    "Home",
+    "Play video.",
+    "Spotify",
+    "Heart",
+    "Google Chrome",
+    "Shuffle",
+    "Notifications",
+    "folder"
+  ]
+}

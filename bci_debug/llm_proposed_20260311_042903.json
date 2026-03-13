@@ -1,0 +1,36 @@
+{
+  "survivors_count": 15,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"ENG US\", \"target\": 0},\n    {\"goal\": \"Qx\", \"target\": 1},\n    {\"goal\": \"4.28 AM 3/11/2026\", \"target\": 2},\n    {\"goal\": \"WhatsApp\", \"target\": 3},\n    {\"goal\": \"Shield\", \"target\": 4},\n    {\"goal\": \"Google Chrome\", \"target\": 5},\n    {\"goal\": \"Spotify\", \"target\": 6},\n    {\"goal\": \"Subscript\", \"target\": 7},\n    {\"goal\": \"Gallery\", \"target\": 8},\n    {\"goal\": \"Toggle\", \"target\": 9},\n    {\"goal\": \"WiFi\", \"target\": 10},\n    {\"goal\": \"Windows\", \"target\": 11},\n    {\"goal\": \"PyCharm\", \"target\": 12},\n    {\"goal\": \"Pencil\", \"target\": 13},\n    {\"goal\": \"M0,0L9,0 4.5,5z\", \"target\": 14}\n  ]\n}",
+  "chosen_indices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13
+  ],
+  "final_actions": [
+    "ENG US",
+    "Qx",
+    "4.28 AM 3/11/2026",
+    "WhatsApp",
+    "Shield",
+    "Google Chrome",
+    "Spotify",
+    "Subscript",
+    "Gallery",
+    "Toggle",
+    "WiFi",
+    "Windows",
+    "PyCharm",
+    "Pencil"
+  ]
+}

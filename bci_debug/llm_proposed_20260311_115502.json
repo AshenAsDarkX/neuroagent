@@ -1,0 +1,26 @@
+{
+  "survivors_count": 14,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"open Control Panel\", \"target\": 2},\n    {\"goal\": \"open Google Chrome\", \"target\": 4},\n    {\"goal\": \"open PowerPoint\", \"target\": 6},\n    {\"goal\": \"open Windows\", \"target\": 7},\n    {\"goal\": \"open Spotify\", \"target\": 8},\n    {\"goal\": \"open Pencil\", \"target\": 9},\n    {\"goal\": \"open Redo\", \"target\": 10},\n    {\"goal\": \"open Send\", \"target\": 12},\n    {\"goal\": \"open WiFi\", \"target\": 11}\n  ]\n}",
+  "chosen_indices": [
+    2,
+    4,
+    6,
+    7,
+    8,
+    9,
+    10,
+    12,
+    11
+  ],
+  "final_actions": [
+    "open Control Panel",
+    "open Google Chrome",
+    "open PowerPoint",
+    "open Windows",
+    "open Spotify",
+    "open Pencil",
+    "open Redo",
+    "open Send",
+    "open WiFi"
+  ]
+}

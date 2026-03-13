@@ -1,0 +1,15 @@
+{
+  "survivors_count": 8,
+  "raw_response": "",
+  "chosen_indices": [],
+  "final_actions": [
+    "Click Search",
+    "Open Chrome",
+    "Click Pycharm",
+    "Click Gallery",
+    "Open Spotify",
+    "Open Start",
+    "Open Edge",
+    "Ink Color Color Yellow"
+  ]
+}

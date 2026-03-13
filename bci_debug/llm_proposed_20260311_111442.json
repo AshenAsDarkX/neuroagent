@@ -1,0 +1,36 @@
+{
+  "survivors_count": 20,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Close\", \"target\": 1},\n    {\"goal\": \"Next\", \"target\": 2},\n    {\"goal\": \"Videos\", \"target\": 4},\n    {\"goal\": \"Pictures\", \"target\": 5},\n    {\"goal\": \"wireshark activity\", \"target\": 6},\n    {\"goal\": \"Downloads\", \"target\": 7},\n    {\"goal\": \"Screenshots\", \"target\": 8},\n    {\"goal\": \"Gallery\", \"target\": 9},\n    {\"goal\": \"Nitro\", \"target\": 10},\n    {\"goal\": \"Home\", \"target\": 11},\n    {\"goal\": \"final year project\", \"target\": 12},\n    {\"goal\": \"item\", \"target\": 13},\n    {\"goal\": \"Forward\", \"target\": 14},\n    {\"goal\": \"Up\", \"target\": 15},\n    {\"goal\": \"Justified\", \"target\": 16},\n    {\"goal\": \"Laptop\", \"target\": 17},\n    {\"goal\": \"More options\", \"target\": 18},\n    {\"goal\": \"Reload\", \"target\": 19},\n    {\"goal\": \"Tasks\", \"target\": 20},\n    {\"goal\": \"Outlook\", \"target\": 21}\n  ]\n}",
+  "chosen_indices": [
+    1,
+    2,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "final_actions": [
+    "Close",
+    "Next",
+    "Videos",
+    "Pictures",
+    "wireshark activity",
+    "Downloads",
+    "Screenshots",
+    "Gallery",
+    "Nitro",
+    "Home",
+    "final year project",
+    "item",
+    "Forward",
+    "Up"
+  ]
+}

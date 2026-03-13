@@ -1,0 +1,21 @@
+{
+  "survivors_count": 72,
+  "raw_response": "",
+  "chosen_indices": [],
+  "final_actions": [
+    "Click View",
+    "Click Sort",
+    "Click New",
+    "Click Rename",
+    "Click Delete",
+    "Click Paste",
+    "Click Share",
+    "Click Cut",
+    "Click Next",
+    "Click Pyautogui",
+    "Click Final Project",
+    "Click Cyber Security",
+    "Click Downloads",
+    "Click Pictures"
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "survivors_count": 20,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Close\", \"target\": 0},\n    {\"goal\": \"Next\", \"target\": 1},\n    {\"goal\": \"cyber security\", \"target\": 5},\n    {\"goal\": \"Downloads\", \"target\": 6},\n    {\"goal\": \"Videos\", \"target\": 7},\n    {\"goal\": \"Acer\", \"target\": 8},\n    {\"goal\": \"This\", \"target\": 9},\n    {\"goal\": \"wireshark activity\", \"target\": 10},\n    {\"goal\": \"Gallery\", \"target\": 11},\n    {\"goal\": \"Home\", \"target\": 12},\n    {\"goal\": \"Network\", \"target\": 13},\n    {\"goal\": \"Ashen Personal\", \"target\": 14},\n    {\"goal\": \"Untitled1.ipynb\", \"target\": 15},\n    {\"goal\": \"agenticLayer ipynb\", \"target\": 16},\n    {\"goal\": \"bci_agentpy\", \"target\": 17},\n    {\"goal\": \"Desktop\", \"target\": 18},\n    {\"goal\": \"omniparser_bci py\", \"target\": 19},\n    {\"goal\": \"bci_agent_V4.py\", \"target\": 20}\n  ]\n}",
+  "chosen_indices": [
+    0,
+    1,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16
+  ],
+  "final_actions": [
+    "Close",
+    "Next",
+    "cyber security",
+    "Downloads",
+    "Videos",
+    "Acer",
+    "This",
+    "wireshark activity",
+    "Gallery",
+    "Home",
+    "Network",
+    "Ashen Personal",
+    "Untitled1.ipynb",
+    "agenticLayer ipynb"
+  ]
+}

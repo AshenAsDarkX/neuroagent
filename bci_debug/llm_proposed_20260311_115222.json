@@ -1,0 +1,24 @@
+{
+  "survivors_count": 20,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Close\", \"target\": 0},\n    {\"goal\": \"History Compute_\", \"target\": 4},\n    {\"goal\": \"Read more\", \"target\": 6},\n    {\"goal\": \"Reload\", \"target\": 15},\n    {\"goal\": \"Back\", \"target\": 14},\n    {\"goal\": \"More apps\", \"target\": 16},\n    {\"goal\": \"Applying to Grid\", \"target\": 21},\n    {\"goal\": \"More\", \"target\": 18}\n  ]\n}",
+  "chosen_indices": [
+    0,
+    4,
+    6,
+    15,
+    14,
+    16,
+    21,
+    18
+  ],
+  "final_actions": [
+    "Close",
+    "History Compute_",
+    "Read more",
+    "Reload",
+    "Back",
+    "More apps",
+    "Applying to Grid",
+    "More"
+  ]
+}

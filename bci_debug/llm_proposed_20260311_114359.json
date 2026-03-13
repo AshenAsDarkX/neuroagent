@@ -1,0 +1,36 @@
+{
+  "survivors_count": 18,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"ENG US\", \"target\": 1},\n    {\"goal\": \"Sinhala Sinhala\", \"target\": 0},\n    {\"goal\": \"Control Panel\", \"target\": 2},\n    {\"goal\": \"This PC\", \"target\": 3},\n    {\"goal\": \"Google Chrome\", \"target\": 4},\n    {\"goal\": \"folder\", \"target\": 5},\n    {\"goal\": \"PowerPoint\", \"target\": 6},\n    {\"goal\": \"Windows\", \"target\": 7},\n    {\"goal\": \"Spotify\", \"target\": 8},\n    {\"goal\": \"Refresh\", \"target\": 9},\n    {\"goal\": \"Pencil\", \"target\": 10},\n    {\"goal\": \"WiFi\", \"target\": 11},\n    {\"goal\": \"Couch\", \"target\": 12},\n    {\"goal\": \"ENG English (Malaysia) US\", \"target\": 13},\n    {\"goal\": \"Keyboard layout Spacebar\", \"target\": 16},\n    {\"goal\": \"More keyboard settings\", \"target\": 17},\n    {\"goal\": \"View as full screen\", \"target\": 18},\n    {\"goal\": \"M0,0L9,0 4.5,5z\", \"target\": 19}\n  ]\n}",
+  "chosen_indices": [
+    1,
+    0,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13
+  ],
+  "final_actions": [
+    "ENG US",
+    "Sinhala Sinhala",
+    "Control Panel",
+    "This PC",
+    "Google Chrome",
+    "folder",
+    "PowerPoint",
+    "Windows",
+    "Spotify",
+    "Refresh",
+    "Pencil",
+    "WiFi",
+    "Couch",
+    "ENG English (Malaysia) US"
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "survivors_count": 20,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Clear\", \"target\": 0},\n    {\"goal\": \"We\", \"target\": 1},\n    {\"goal\": \"Focus\", \"target\": 2},\n    {\"goal\": \"30 mins\", \"target\": 3},\n    {\"goal\": \"Mo\", \"target\": 4},\n    {\"goal\": \"March 2026\", \"target\": 6},\n    {\"goal\": \"Friday\", \"target\": 8},\n    {\"goal\": \"Minimize\", \"target\": 9},\n    {\"goal\": \"Adobe Photoshop\", \"target\": 10},\n    {\"goal\": \"Tu\", \"target\": 11},\n    {\"goal\": \"Add\", \"target\": 12},\n    {\"goal\": \"Thon\", \"target\": 13},\n    {\"goal\": \"Sup\", \"target\": 14},\n    {\"goal\": \"Sa\", \"target\": 15},\n    {\"goal\": \"2, September, 2024\", \"target\": 16},\n    {\"goal\": \"4, September, 2024\", \"target\": 17},\n    {\"goal\": \"3, September, 2024\", \"target\": 18},\n    {\"goal\": \"QuizCode\", \"target\": 19},\n    {\"goal\": \"Subtitles\", \"target\": 20},\n    {\"goal\": \"Notification settings\", \"target\": 21}\n  ]\n}",
+  "chosen_indices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    6,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "final_actions": [
+    "Clear",
+    "We",
+    "Focus",
+    "30 mins",
+    "Mo",
+    "March 2026",
+    "Friday",
+    "Minimize",
+    "Adobe Photoshop",
+    "Tu",
+    "Add",
+    "Thon",
+    "Sup",
+    "Sa"
+  ]
+}

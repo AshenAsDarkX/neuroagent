@@ -1,0 +1,36 @@
+{
+  "survivors_count": 20,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"close window\", \"target\": 0},\n    {\"goal\": \"open next tab\", \"target\": 1},\n    {\"goal\": \"open cyber security page\", \"target\": 4},\n    {\"goal\": \"open pictures folder\", \"target\": 5},\n    {\"goal\": \"open videos folder\", \"target\": 6},\n    {\"goal\": \"open downloads folder\", \"target\": 7},\n    {\"goal\": \"open gallery\", \"target\": 8},\n    {\"goal\": \"open Acer settings\", \"target\": 9},\n    {\"goal\": \"open home folder\", \"target\": 10},\n    {\"goal\": \"open Ashen Personal settings\", \"target\": 11},\n    {\"goal\": \"open network settings\", \"target\": 12},\n    {\"goal\": \"open items folder\", \"target\": 13},\n    {\"goal\": \"open degree fourth year page\", \"target\": 14},\n    {\"goal\": \"open incident2 pcap file\", \"target\": 15},\n    {\"goal\": \"open This PC\", \"target\": 16},\n    {\"goal\": \"open File Explorer\", \"target\": 17},\n    {\"goal\": \"open Google Chrome\", \"target\": 19},\n    {\"goal\": \"open forward tab\", \"target\": 20}\n  ]\n}",
+  "chosen_indices": [
+    0,
+    1,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "final_actions": [
+    "close window",
+    "open next tab",
+    "open cyber security page",
+    "open pictures folder",
+    "open videos folder",
+    "open downloads folder",
+    "open gallery",
+    "open Acer settings",
+    "open home folder",
+    "open Ashen Personal settings",
+    "open network settings",
+    "open items folder",
+    "open degree fourth year page",
+    "open incident2 pcap file"
+  ]
+}

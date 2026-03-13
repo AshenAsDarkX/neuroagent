@@ -1,0 +1,28 @@
+{
+  "survivors_count": 13,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"open settings\", \"target\": 13},\n    {\"goal\": \"open control panel\", \"target\": 3},\n    {\"goal\": \"open google chrome\", \"target\": 4},\n    {\"goal\": \"open whatsapp\", \"target\": 5},\n    {\"goal\": \"open corel paint\", \"target\": 6},\n    {\"goal\": \"save file\", \"target\": 7},\n    {\"goal\": \"open spotify\", \"target\": 9},\n    {\"goal\": \"open pencil app\", \"target\": 10},\n    {\"goal\": \"open toggle box app\", \"target\": 11},\n    {\"goal\": \"open wifi settings\", \"target\": 12}\n  ]\n}",
+  "chosen_indices": [
+    13,
+    3,
+    4,
+    5,
+    6,
+    7,
+    9,
+    10,
+    11,
+    12
+  ],
+  "final_actions": [
+    "open settings",
+    "open control panel",
+    "open google chrome",
+    "open whatsapp",
+    "open corel paint",
+    "save file",
+    "open spotify",
+    "open pencil app",
+    "open toggle box app",
+    "open wifi settings"
+  ]
+}

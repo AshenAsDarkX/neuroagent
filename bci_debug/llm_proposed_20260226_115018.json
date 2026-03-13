@@ -1,0 +1,18 @@
+{
+  "survivors_count": 12,
+  "raw_response": "{\"chosen\":[0,3,8,6,7]}",
+  "chosen_indices": [
+    0,
+    3,
+    8,
+    6,
+    7
+  ],
+  "final_actions": [
+    "Click Search",
+    "Open Spotify",
+    "Click Initiative Font",
+    "Click Pycharm",
+    "Open Chrome"
+  ]
+}

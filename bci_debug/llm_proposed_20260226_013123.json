@@ -1,0 +1,32 @@
+{
+  "survivors_count": 66,
+  "raw_response": "{\"chosen\":[12,32,38,47,48,28,29,30,31,33,34,36]}",
+  "chosen_indices": [
+    12,
+    32,
+    38,
+    47,
+    48,
+    28,
+    29,
+    30,
+    31,
+    33,
+    34,
+    36
+  ],
+  "final_actions": [
+    "Click Search Function",
+    "Open Chrome",
+    "Click Cloud",
+    "Click Forward",
+    "Click Up Arrow",
+    "Click Omniparser_Bcipy",
+    "Click Debug_Omniparserpy",
+    "Click Bci_Agent_V3 Py",
+    "Click Bci_Agent_V4.Py",
+    "Click Pyramid Pro",
+    "Open M365",
+    "Open Spotify"
+  ]
+}

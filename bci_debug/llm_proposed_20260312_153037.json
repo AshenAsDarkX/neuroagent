@@ -1,0 +1,28 @@
+{
+  "survivors_count": 11,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Close\", \"target\": 0},\n    {\"goal\": \"Guest mode\", \"target\": 1},\n    {\"goal\": \"Google Chrome\", \"target\": 2},\n    {\"goal\": \"Show on startup\", \"target\": 3},\n    {\"goal\": \"Minimize\", \"target\": 4},\n    {\"goal\": \"Maximize\", \"target\": 5},\n    {\"goal\": \"More\", \"target\": 6},\n    {\"goal\": \"Hexagon\", \"target\": 7},\n    {\"goal\": \"Play\", \"target\": 8},\n    {\"goal\": \"Start from Current\", \"target\": 9}\n  ]\n}",
+  "chosen_indices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "final_actions": [
+    "Close",
+    "Guest mode",
+    "Google Chrome",
+    "Show on startup",
+    "Minimize",
+    "Maximize",
+    "More",
+    "Hexagon",
+    "Play",
+    "Start from Current"
+  ]
+}

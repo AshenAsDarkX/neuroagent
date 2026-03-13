@@ -1,0 +1,21 @@
+{
+  "survivors_count": 65,
+  "raw_response": "",
+  "chosen_indices": [],
+  "final_actions": [
+    "Click View",
+    "Click Sort",
+    "Click New",
+    "Click Rename",
+    "Click Paste",
+    "Click Delete",
+    "Click Share",
+    "Click Cut",
+    "Click Next",
+    "View as full screen",
+    "Click Cyber Security",
+    "Click Wireshark",
+    "Click Ashen Personal",
+    "Click Videos"
+  ]
+}

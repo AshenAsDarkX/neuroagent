@@ -1,0 +1,36 @@
+{
+  "survivors_count": 14,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"ENG US\", \"target\": 0},\n    {\"goal\": \"This PC\", \"target\": 1},\n    {\"goal\": \"Control Panel\", \"target\": 2},\n    {\"goal\": \"Qx\", \"target\": 3},\n    {\"goal\": \"Google Chrome\", \"target\": 4},\n    {\"goal\": \"Ink Pro\", \"target\": 5},\n    {\"goal\": \"Save\", \"target\": 6},\n    {\"goal\": \"PowerPoint\", \"target\": 7},\n    {\"goal\": \"Windows\", \"target\": 8},\n    {\"goal\": \"Spotify\", \"target\": 9},\n    {\"goal\": \"Redo\", \"target\": 10},\n    {\"goal\": \"WiFi\", \"target\": 11},\n    {\"goal\": \"Toggle File\", \"target\": 12},\n    {\"goal\": \"M0,0L9,0 4.5,5z\", \"target\": 13}\n  ]\n}",
+  "chosen_indices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13
+  ],
+  "final_actions": [
+    "ENG US",
+    "This PC",
+    "Control Panel",
+    "Qx",
+    "Google Chrome",
+    "Ink Pro",
+    "Save",
+    "PowerPoint",
+    "Windows",
+    "Spotify",
+    "Redo",
+    "WiFi",
+    "Toggle File",
+    "M0,0L9,0 4.5,5z"
+  ]
+}

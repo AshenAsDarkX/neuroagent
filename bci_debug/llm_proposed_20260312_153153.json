@@ -1,0 +1,22 @@
+{
+  "survivors_count": 13,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Close\", \"target\": 0},\n    {\"goal\": \"Guest mode\", \"target\": 2},\n    {\"goal\": \"Show on startup\", \"target\": 5},\n    {\"goal\": \"More\", \"target\": 9},\n    {\"goal\": \"Hide\", \"target\": 8},\n    {\"goal\": \"iitac_Ik Ashen Himeshana\", \"target\": 10},\n    {\"goal\": \"cloud9gxprojects cloudggx-projects\", \"target\": 13}\n  ]\n}",
+  "chosen_indices": [
+    0,
+    2,
+    5,
+    9,
+    8,
+    10,
+    13
+  ],
+  "final_actions": [
+    "Close",
+    "Guest mode",
+    "Show on startup",
+    "More",
+    "Hide",
+    "iitac_Ik Ashen Himeshana",
+    "cloud9gxprojects cloudggx-projects"
+  ]
+}

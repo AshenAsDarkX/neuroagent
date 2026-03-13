@@ -1,0 +1,24 @@
+{
+  "survivors_count": 8,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"click Search\", \"target\": 0},\n    {\"goal\": \"click Google Chrome\", \"target\": 1},\n    {\"goal\": \"click folder\", \"target\": 2},\n    {\"goal\": \"click PyCharm\", \"target\": 3},\n    {\"goal\": \"click Windows\", \"target\": 4},\n    {\"goal\": \"click Initiative Font\", \"target\": 5},\n    {\"goal\": \"click Spotify\", \"target\": 6},\n    {\"goal\": \"click Microsoft Edge browser\", \"target\": 7}\n  ]\n}",
+  "chosen_indices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "final_actions": [
+    "click Search",
+    "click Google Chrome",
+    "click folder",
+    "click PyCharm",
+    "click Windows",
+    "click Initiative Font",
+    "click Spotify",
+    "click Microsoft Edge browser"
+  ]
+}

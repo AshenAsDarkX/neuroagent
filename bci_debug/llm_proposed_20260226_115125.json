@@ -1,0 +1,18 @@
+{
+  "survivors_count": 49,
+  "raw_response": "{\"chosen\":[18,23,7,3,4]}",
+  "chosen_indices": [
+    18,
+    23,
+    7,
+    3,
+    4
+  ],
+  "final_actions": [
+    "Click Pycharm",
+    "Open Chrome",
+    "Click Ppmon. Phonk",
+    "Click Delete",
+    "DISCOVER WEEKLY Your shortcu"
+  ]
+}

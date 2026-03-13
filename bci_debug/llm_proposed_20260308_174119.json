@@ -1,0 +1,36 @@
+{
+  "survivors_count": 20,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Close\", \"target\": 1},\n    {\"goal\": \"Next\", \"target\": 2},\n    {\"goal\": \"Table 2.02 Z3LLA\", \"target\": 3},\n    {\"goal\": \"IEMUP\", \"target\": 4},\n    {\"goal\": \"Push It\", \"target\": 5},\n    {\"goal\": \"Turbo Speed\", \"target\": 6},\n    {\"goal\": \"Genie Bottle\", \"target\": 8},\n    {\"goal\": \"Oscar\", \"target\": 9},\n    {\"goal\": \"Home\", \"target\": 10},\n    {\"goal\": \"Play video.\", \"target\": 11},\n    {\"goal\": \"Heart\", \"target\": 12},\n    {\"goal\": \"Spotify\", \"target\": 13},\n    {\"goal\": \"Save\", \"target\": 14},\n    {\"goal\": \"Google Chrome\", \"target\": 15},\n    {\"goal\": \"PowerPoint\", \"target\": 16},\n    {\"goal\": \"Kids\", \"target\": 17},\n    {\"goal\": \"Minimize\", \"target\": 18},\n    {\"goal\": \"Shuffleboard\", \"target\": 19},\n    {\"goal\": \"Notifications\", \"target\": 20},\n    {\"goal\": \"More options\", \"target\": 21}\n  ]\n}",
+  "chosen_indices": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "final_actions": [
+    "Close",
+    "Next",
+    "Table 2.02 Z3LLA",
+    "IEMUP",
+    "Push It",
+    "Turbo Speed",
+    "Genie Bottle",
+    "Oscar",
+    "Home",
+    "Play video.",
+    "Heart",
+    "Spotify",
+    "Save",
+    "Google Chrome"
+  ]
+}

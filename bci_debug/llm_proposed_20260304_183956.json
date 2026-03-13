@@ -1,0 +1,21 @@
+{
+  "survivors_count": 44,
+  "raw_response": "",
+  "chosen_indices": [],
+  "final_actions": [
+    "Click Search",
+    "Click Close",
+    "Click New Addition",
+    "Click Next",
+    "Click Delete",
+    "Click Recently Played",
+    "Click Hathpethi Mal",
+    "Click Queue",
+    "Click Sansarini",
+    "Click Home",
+    "A Mix function",
+    "Click Play Video",
+    "Open Spotify",
+    "Click Save"
+  ]
+}

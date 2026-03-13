@@ -1,0 +1,26 @@
+{
+  "survivors_count": 11,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"open Microsoft Edge browser\", \"target\": 10},\n    {\"goal\": \"open Google Chrome\", \"target\": 3},\n    {\"goal\": \"open PowerPoint\", \"target\": 2},\n    {\"goal\": \"open Spotify\", \"target\": 4},\n    {\"goal\": \"save with Save\", \"target\": 5},\n    {\"goal\": \"change input language to ENG US\", \"target\": 1},\n    {\"goal\": \"change input language to Powerpoint\", \"target\": 2},\n    {\"goal\": \"change input language to Chrome\", \"target\": 3},\n    {\"goal\": \"change input language to Spotify\", \"target\": 4},\n    {\"goal\": \"change input language to Edge browser\", \"target\": 10},\n    {\"goal\": \"change input language to Initiative\", \"target\": 7},\n    {\"goal\": \"change input language to WiFi\", \"target\": 8},\n    {\"goal\": \"change input language to Curve\", \"target\": 9}\n  ]\n}",
+  "chosen_indices": [
+    10,
+    3,
+    2,
+    4,
+    5,
+    1,
+    7,
+    8,
+    9
+  ],
+  "final_actions": [
+    "open Microsoft Edge browser",
+    "open Google Chrome",
+    "open PowerPoint",
+    "open Spotify",
+    "save with Save",
+    "change input language to ENG US",
+    "change input language to Initiative",
+    "change input language to WiFi",
+    "change input language to Curve"
+  ]
+}

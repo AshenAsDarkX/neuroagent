@@ -1,0 +1,22 @@
+{
+  "survivors_count": 9,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"open Google Chrome\", \"target\": 1},\n    {\"goal\": \"open PowerPoint\", \"target\": 3},\n    {\"goal\": \"open Windows\", \"target\": 4},\n    {\"goal\": \"open folder\", \"target\": 2},\n    {\"goal\": \"open Spotify\", \"target\": 7},\n    {\"goal\": \"open System\", \"target\": 8},\n    {\"goal\": \"open Microsoft Edge browser\", \"target\": 9}\n  ]\n}",
+  "chosen_indices": [
+    1,
+    3,
+    4,
+    2,
+    7,
+    8,
+    9
+  ],
+  "final_actions": [
+    "open Google Chrome",
+    "open PowerPoint",
+    "open Windows",
+    "open folder",
+    "open Spotify",
+    "open System",
+    "open Microsoft Edge browser"
+  ]
+}

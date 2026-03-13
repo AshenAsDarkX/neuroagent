@@ -1,0 +1,24 @@
+{
+  "survivors_count": 8,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"click Search\", \"target\": 0},\n    {\"goal\": \"click PowerPoint\", \"target\": 1},\n    {\"goal\": \"click Google Chrome\", \"target\": 2},\n    {\"goal\": \"click folder\", \"target\": 3},\n    {\"goal\": \"click Spotify\", \"target\": 4},\n    {\"goal\": \"click Windows\", \"target\": 5},\n    {\"goal\": \"click Microsoft Edge browser\", \"target\": 6},\n    {\"goal\": \"click Ink Color Color Yellow\", \"target\": 7}\n  ]\n}",
+  "chosen_indices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "final_actions": [
+    "click Search",
+    "click PowerPoint",
+    "click Google Chrome",
+    "click folder",
+    "click Spotify",
+    "click Windows",
+    "click Microsoft Edge browser",
+    "click Ink Color Color Yellow"
+  ]
+}
