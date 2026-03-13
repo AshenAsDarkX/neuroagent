@@ -26,13 +26,19 @@ from controller import BCIController
 def main() -> None:
     config = AppConfig.load()
     bci_screen = BCIDisplay()
-    bci_screen.set_info("EEG2Code loading...")
+    def show_phase(message: str) -> None:
+        bci_screen.set_loading(True, message)
+
+    def clear_phase() -> None:
+        bci_screen.set_loading(False)
+
     bci = EEG2CodeBCI(
         model_path=os.path.join(config.base_dir, "model", "EEG2Code_model.hdf5"),
         dataset_path=os.path.join(config.base_dir, "data", "VP1.mat"),
-        status_callback=bci_screen.set_info,
+        status_callback=show_phase,
+        clear_callback=clear_phase,
     )
-    bci_screen.set_info("Starting agent controller...")
+    bci_screen.set_loading(True, "Loading OmniParser...")
     app = BCIController(config, bci=bci, bci_screen=bci_screen)
     app.run()
 

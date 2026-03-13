@@ -1,9 +1,37 @@
 import threading
+import time
 import tkinter as tk
+import numpy as np
+import scipy.io
+import os
 from screeninfo import get_monitors
 
 
-FLICKER_FREQUENCIES = [8, 9, 10, 11, 12, 13]
+REFRESH_RATE = 60
+
+DATASET_PATH = os.path.join(
+    os.path.dirname(__file__),
+    "data",
+    "VP1.mat"
+)
+
+data = scipy.io.loadmat(DATASET_PATH)
+
+stim_bits = data["test_data_y"]
+
+SAMPLING_RATE = 600
+STIM_REFRESH_RATE = 60
+samples_per_bit = SAMPLING_RATE // STIM_REFRESH_RATE
+
+TARGET_COUNT = 6
+
+STIM_CODES = []
+
+for i in range(TARGET_COUNT):
+    raw = stim_bits[i].reshape(-1)
+    bits = (raw > 0).astype(int)
+    downsampled = bits[::samples_per_bit]
+    STIM_CODES.append(downsampled)
 
 
 class BCIDisplay:
@@ -39,25 +67,34 @@ class BCIDisplay:
 
         self.labels = []
         self._flicker_targets = []
-        self._status_lines = []
         self._selected_index = None
         self._flicker_running = True
+        self._loader_running = False
+        self._loader_job = None
+        self._loader_index = 0
+        self._loader_text = "Loading"
+        self._loader_width = 18
+        self._header_bg_default = "#121212"
+        self._info_fg_default = "#9be7ff"
+        self._flicker_start_time = 0.0
+        self._frame_index = 0
+        self._frame_interval = max(1, int(1000 / REFRESH_RATE))
         self.grid = None
 
         self._build_ui()
         self._start_flicker()
 
     def _build_ui(self):
-        header = tk.Frame(self.root, bg="#121212", height=140)
-        header.pack(fill=tk.X)
-        header.pack_propagate(False)
+        self.header = tk.Frame(self.root, bg=self._header_bg_default, height=140)
+        self.header.pack(fill=tk.X)
+        self.header.pack_propagate(False)
 
         self.info_label = tk.Label(
-            header,
+            self.header,
             text="System starting...",
             font=("Consolas", 14),
-            fg="#9be7ff",
-            bg="#121212",
+            fg=self._info_fg_default,
+            bg=self._header_bg_default,
             justify=tk.LEFT,
             anchor="w",
             padx=20,
@@ -94,12 +131,9 @@ class BCIDisplay:
             label.grid(row=row, column=col, sticky="nsew", padx=12, pady=12)
             self.labels.append(label)
 
-            period = int(1000 / (2 * FLICKER_FREQUENCIES[i]))
             self._flicker_targets.append(
                 {
                     "label": label,
-                    "period": period,
-                    "state": False,
                     "index": i,
                 }
             )
@@ -123,31 +157,45 @@ class BCIDisplay:
             label.config(wraplength=wrap, font=("Arial", font_size, "bold"))
 
     def _start_flicker(self):
-        for target in self._flicker_targets:
-            self._flicker(target)
+        self._flicker_start_time = time.perf_counter()
+        self._frame_index = 0
+        self._update_flicker_frame()
 
-    def _flicker(self, target):
+    def _update_flicker_frame(self):
         if not self._flicker_running:
             return
 
-        idx = target["index"]
-        label = target["label"]
-        has_text = bool(label.cget("text").strip())
-
         try:
-            if self._selected_index == idx and has_text:
-                label.config(bg="green", fg="black", bd=4, relief="solid")
-            elif not has_text:
-                label.config(bg="black", fg="white", bd=3, relief="solid")
-            elif target["state"]:
-                label.config(bg="white", fg="black", bd=3, relief="solid")
-            else:
-                label.config(bg="black", fg="white", bd=3, relief="solid")
+            elapsed = time.perf_counter() - self._flicker_start_time
+            frame = int(elapsed * REFRESH_RATE)
+            self._frame_index = frame
 
-            target["state"] = not target["state"]
-            self.root.after(target["period"], lambda: self._flicker(target))
+            for target in self._flicker_targets:
+                idx = target["index"]
+                label = target["label"]
+                if idx >= len(STIM_CODES):
+                    continue
+
+                code = STIM_CODES[idx]
+                bit = code[frame % len(code)]
+
+                if self._selected_index == idx and label.cget("text").strip():
+                    label.config(bg="green", fg="black", bd=4, relief="solid")
+                    continue
+
+                if not label.cget("text").strip():
+                    label.config(bg="black", fg="white", bd=3, relief="solid")
+                    continue
+
+                if bit == 1:
+                    label.config(bg="white", fg="black", bd=3, relief="solid")
+                else:
+                    label.config(bg="black", fg="white", bd=3, relief="solid")
         except Exception:
             pass
+        finally:
+            if self._flicker_running:
+                self.root.after(self._frame_interval, self._update_flicker_frame)
 
     def set_info(self, text):
         if threading.current_thread() is threading.main_thread():
@@ -157,14 +205,91 @@ class BCIDisplay:
 
     def _set_info_now(self, text):
         line = str(text).strip()
-        if not line:
+        if self._loader_running:
+            self._loader_text = line or self._loader_text
             return
-        if self._status_lines and self._status_lines[-1] == line:
-            return
-        self._status_lines.append(line)
-        self._status_lines = self._status_lines[-5:]
-        self.info_label.config(text="\n".join(self._status_lines))
+        self.info_label.config(text=line)
         self.root.update_idletasks()
+
+    def clear_info(self):
+        if threading.current_thread() is threading.main_thread():
+            self.info_label.config(text="")
+            self.root.update_idletasks()
+        else:
+            self.root.after(0, self.clear_info)
+
+    def set_loading_text(self, text):
+        if threading.current_thread() is threading.main_thread():
+            line = str(text).strip()
+            if line:
+                self._loader_text = line
+        else:
+            self.root.after(0, lambda t=text: self.set_loading_text(t))
+
+    def set_loading(self, enabled, text="Loading"):
+        if threading.current_thread() is threading.main_thread():
+            self._set_loading_now(enabled, text)
+        else:
+            self.root.after(0, lambda e=enabled, t=text: self._set_loading_now(e, t))
+
+    def _set_loading_now(self, enabled, text):
+        if enabled:
+            self._loader_text = str(text).strip() or self._loader_text or "Loading"
+            if not self._loader_running:
+                self._loader_running = True
+                self._loader_index = 0
+                self._animate_loader()
+            return
+
+        self._loader_running = False
+        if self._loader_job is not None:
+            try:
+                self.root.after_cancel(self._loader_job)
+            except Exception:
+                pass
+            self._loader_job = None
+        self.info_label.config(text="")
+        self.root.update_idletasks()
+
+    def _animate_loader(self):
+        if not self._loader_running:
+            return
+
+        cycle = self._loader_width * 2 - 2
+        pos = self._loader_index % cycle
+        if pos >= self._loader_width:
+            pos = cycle - pos
+
+        filled = max(1, pos + 1)
+        bar = "|" * filled + "_" * (self._loader_width - filled)
+        self.info_label.config(text=f"{self._loader_text} {bar}")
+        self._loader_index += 1
+        self._loader_job = self.root.after(140, self._animate_loader)
+        if self._loader_running:
+            self.root.update_idletasks()
+
+    def flash_signal_rejection(self):
+        if threading.current_thread() is threading.main_thread():
+            self._flash_signal_rejection_now()
+        else:
+            self.root.after(0, self._flash_signal_rejection_now)
+
+    def _flash_signal_rejection_now(self):
+        try:
+            reject_bg = "#331111"
+            reject_fg = "#ffb3b3"
+            self.header.config(bg=reject_bg)
+            self.info_label.config(bg=reject_bg, fg=reject_fg)
+            self.root.after(220, self._reset_signal_rejection_flash)
+        except Exception:
+            pass
+
+    def _reset_signal_rejection_flash(self):
+        try:
+            self.header.config(bg=self._header_bg_default)
+            self.info_label.config(bg=self._header_bg_default, fg=self._info_fg_default)
+        except Exception:
+            pass
 
     def show_actions(self, actions):
         self._selected_index = None
