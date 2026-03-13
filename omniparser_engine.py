@@ -4,7 +4,7 @@ import os
 import sys
 import time
 import traceback
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from PIL import Image, ImageGrab
 
@@ -20,6 +20,7 @@ class OmniParserEngine:
         self.omni_available = False
         self._omni: Dict[str, Any] = {}
         self._device: str = "cpu"
+        self._capture_offset: Tuple[int, int] = (0, 0)
         self._init_omniparser()
 
     def _status(self, message: str) -> None:
@@ -97,13 +98,80 @@ class OmniParserEngine:
 
     def capture_main_monitor(self) -> Optional[Image.Image]:
         """Capture only DISPLAY1 for parsing."""
-        screenshot = self._capture_fullscreen_imagegrab()
+        main_bbox = self._get_main_monitor_bbox()
+        screenshot = self._capture_fullscreen_imagegrab(bbox=main_bbox)
 
         if screenshot is None:
             print("[Capture] All capture methods failed.")
             return None
 
+        self._capture_offset = (main_bbox[0], main_bbox[1])
         return screenshot
+
+    def capture_active_window_on_main_monitor(
+        self,
+        fallback_to_main: bool = True,
+    ) -> Optional[Image.Image]:
+        """Capture active window area clipped to DISPLAY1 only."""
+        main_left, main_top, main_right, main_bottom = self._get_main_monitor_bbox()
+
+        try:
+            import win32gui
+
+            hwnd = win32gui.GetForegroundWindow()
+            if not hwnd:
+                print("[Capture] No active window handle.")
+                if fallback_to_main:
+                    return self.capture_main_monitor()
+                return None
+
+            left, top, right, bottom = win32gui.GetWindowRect(hwnd)
+
+            clip_left = max(left, main_left)
+            clip_top = max(top, main_top)
+            clip_right = min(right, main_right)
+            clip_bottom = min(bottom, main_bottom)
+
+            if clip_left >= clip_right or clip_top >= clip_bottom:
+                print("[Capture] Active window is outside DISPLAY1.")
+                if fallback_to_main:
+                    return self.capture_main_monitor()
+                return None
+
+            bbox = (clip_left, clip_top, clip_right, clip_bottom)
+            screenshot = self._capture_fullscreen_imagegrab(bbox=bbox)
+            if screenshot is None:
+                if fallback_to_main:
+                    return self.capture_main_monitor()
+                return None
+
+            self._capture_offset = (bbox[0], bbox[1])
+            print(f"[Capture] Active window clipped to DISPLAY1 bbox={bbox} size={screenshot.size}")
+            return screenshot
+        except Exception as exc:
+            print(f"[Capture] Active-window capture failed: {exc}")
+            if fallback_to_main:
+                return self.capture_main_monitor()
+            return None
+
+    def _get_main_monitor_bbox(self) -> Tuple[int, int, int, int]:
+        """Return DISPLAY1 bounds as (left, top, right, bottom)."""
+        try:
+            from screeninfo import get_monitors
+
+            monitors = get_monitors()
+            primary = next((monitor for monitor in monitors if monitor.is_primary), None)
+            if primary is not None:
+                return (
+                    int(primary.x),
+                    int(primary.y),
+                    int(primary.x + primary.width),
+                    int(primary.y + primary.height),
+                )
+        except Exception:
+            pass
+
+        return (0, 0, 1920, 1080)
 
     # ------------------------------------------------------------------
     # Capture backends
@@ -155,13 +223,17 @@ class OmniParserEngine:
             print(f"[Capture] win32 fullscreen failed: {exc}")
             return None
 
-    def _capture_fullscreen_imagegrab(self) -> Optional[Image.Image]:
-        """Capture DISPLAY1 only using a fixed bbox."""
+    def _capture_fullscreen_imagegrab(
+        self,
+        bbox: Tuple[int, int, int, int] | None = None,
+    ) -> Optional[Image.Image]:
+        """Capture a screen region via PIL ImageGrab."""
         try:
-            bbox = (0, 0, 1920, 1080)
+            if bbox is None:
+                bbox = self._get_main_monitor_bbox()
             img = ImageGrab.grab(bbox=bbox)
             img = img.convert("RGB")
-            print(f"[Capture] Main monitor via ImageGrab bbox={bbox} size={img.size}")
+            print(f"[Capture] ImageGrab bbox={bbox} size={img.size}")
             return img
         except Exception as exc:
             print(f"[Capture] ImageGrab fallback failed: {exc}")
@@ -225,6 +297,7 @@ class OmniParserEngine:
             win32gui.ReleaseDC(hwnd, hwnd_dc)
 
             print(f"[Capture] Specific window HWND={hwnd} ({width}x{height})")
+            self._capture_offset = (left, top)
             return img
 
         except Exception as exc:
@@ -253,7 +326,15 @@ class OmniParserEngine:
                 easyocr_args={"paragraph": False, "text_threshold": 0.9},
                 use_paddleocr=self.config.omni_use_paddleocr,
             )
-            ocr_text, ocr_bbox = ocr_bbox_result
+            ocr_text = []
+            ocr_bbox = []
+            if isinstance(ocr_bbox_result, (list, tuple)) and len(ocr_bbox_result) >= 2:
+                ocr_text = ocr_bbox_result[0] if ocr_bbox_result[0] is not None else []
+                ocr_bbox = ocr_bbox_result[1] if ocr_bbox_result[1] is not None else []
+            if not isinstance(ocr_text, (list, tuple)):
+                ocr_text = []
+            if not isinstance(ocr_bbox, (list, tuple)):
+                ocr_bbox = []
 
             box_ratio = img_w / 3200
             draw_bbox_config = {
@@ -278,7 +359,12 @@ class OmniParserEngine:
             )
 
             normalized = self._normalize_parsed_content(parsed_content_list)
-            elements = self._build_elements(normalized, img_w, img_h)
+            elements = self._build_elements(
+                normalized,
+                img_w,
+                img_h,
+                self._capture_offset,
+            )
             elements.sort(key=lambda item: (1 if item.interactive else 0, item.score), reverse=True)
 
             total_time = time.time() - start_time
@@ -308,7 +394,9 @@ class OmniParserEngine:
         parsed_content_list: List[Dict[str, Any]],
         img_w: int,
         img_h: int,
+        capture_offset: Tuple[int, int],
     ) -> List[DetectedElement]:
+        offset_x, offset_y = capture_offset
         seen_names = set()
         elements: List[DetectedElement] = []
 
@@ -341,8 +429,8 @@ class OmniParserEngine:
                 elements.append(
                     DetectedElement(
                         name=name,
-                        bbox=(x1, y1, x2, y2),
-                        center=(cx, cy),
+                        bbox=(x1 + offset_x, y1 + offset_y, x2 + offset_x, y2 + offset_y),
+                        center=(cx + offset_x, cy + offset_y),
                         interactive=interactive,
                         element_type=element_type,
                         source=item.get("source"),

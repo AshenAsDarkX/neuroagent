@@ -13,6 +13,7 @@ class ElementRanker:
     def __init__(self, config: AppConfig, debug_writer: DebugArtifactWriter) -> None:
         self.config = config
         self.debug_writer = debug_writer
+        self.bci_filter_inputs = bool(getattr(config, "bci_filter_inputs", True))
 
     @staticmethod
     def is_garbage_label(name: str) -> bool:
@@ -156,7 +157,7 @@ class ElementRanker:
                 continue
 
             # BCI filter — remove elements that require typing
-            if self.config.bci_filter_inputs and self._is_input_element(element, name):
+            if self.bci_filter_inputs and self._is_input_element(element, name):
                 filtered_inputs += 1
                 print(f"[BCI Filter] Removed input element: '{name}'")
                 continue
