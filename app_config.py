@@ -4,6 +4,13 @@ import os
 from dataclasses import dataclass
 
 
+def _env_bool(name: str, default: bool) -> bool:
+    raw = os.environ.get(name)
+    if raw is None:
+        return default
+    return raw.strip().lower() in {"1", "true", "yes", "on"}
+
+
 @dataclass(frozen=True)
 class AppConfig:
     base_dir: str
@@ -19,6 +26,7 @@ class AppConfig:
     wait_after_click_s: int = 10
     llm_url: str = "http://localhost:11434/api/generate"
     llm_model: str = "qwen2.5:3b"
+    bci_filter_inputs: bool = True
 
     @classmethod
     def load(cls) -> "AppConfig":
@@ -44,4 +52,5 @@ class AppConfig:
             base_dir=base_dir,
             omniparser_dir=omniparser_dir,
             debug_dir=os.path.join(base_dir, "bci_debug"),
+            bci_filter_inputs=_env_bool("BCI_FILTER_INPUTS", True),
         )

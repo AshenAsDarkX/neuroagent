@@ -8,8 +8,10 @@ from typing import List, Optional
 import pyautogui
 
 from agent_controller import AgentController
+from agent_state import infer_state
 from app_config import AppConfig
 from debug_writer import DebugArtifactWriter
+from goal_evaluator import goal_satisfied
 from models import DetectedElement
 from omniparser_engine import OmniParserEngine
 from overlay_ui import OverlayUI
@@ -30,6 +32,8 @@ class BCIController:
             execute_click_function=self.execute_click,
             find_element_function=self.find_element_by_name,
             log_action_function=self.log_agent_action,
+            max_steps=5,
+            status_callback=lambda msg: self.ui.set_status_threadsafe(msg, "#3498db"),
         )
 
         self.is_processing = False
@@ -37,6 +41,7 @@ class BCIController:
         self.page = 0
         self.all_elements: List[DetectedElement] = []
         self.overlay_hwnd: Optional[int] = None
+        self.current_goal: str = ""
 
         self.ui = OverlayUI(
             config=self.config,
@@ -46,8 +51,37 @@ class BCIController:
         )
         self.ui.root.update_idletasks()
 
+    def _capture_with_overlay_hidden(self):
+        overlay_was_minimized = False
+
+        try:
+            import win32con
+            import win32gui
+
+            if self.overlay_hwnd and win32gui.IsWindow(self.overlay_hwnd):
+                active_hwnd = win32gui.GetForegroundWindow()
+                if active_hwnd == self.overlay_hwnd:
+                    win32gui.ShowWindow(self.overlay_hwnd, win32con.SW_MINIMIZE)
+                    overlay_was_minimized = True
+                    time.sleep(0.2)
+        except Exception:
+            pass
+
+        try:
+            return self.parser.capture_screen_excluding_overlay(self.overlay_hwnd)
+        finally:
+            if overlay_was_minimized:
+                try:
+                    import win32con
+                    import win32gui
+
+                    if self.overlay_hwnd and win32gui.IsWindow(self.overlay_hwnd):
+                        win32gui.ShowWindow(self.overlay_hwnd, win32con.SW_RESTORE)
+                except Exception:
+                    pass
+
     def scan_environment(self) -> List[DetectedElement]:
-        screenshot = self.parser.capture_screen_excluding_overlay(self.overlay_hwnd)
+        screenshot = self._capture_with_overlay_hidden()
 
         if screenshot is None:
             return []
@@ -85,8 +119,8 @@ class BCIController:
 
         return None
 
-    def start_goal_mode(self, goal: str):
-        self.agent_controller.run_goal(goal)
+    def start_goal_mode(self, goal: str) -> None:
+        self._execute_goal(goal)
 
     def log_agent_action(
         self,
@@ -121,27 +155,7 @@ class BCIController:
 
         def worker() -> None:
             try:
-                import win32gui
-                import win32con
-
-                # hide overlay
-                try:
-                    if self.overlay_hwnd:
-                        win32gui.ShowWindow(self.overlay_hwnd, win32con.SW_MINIMIZE)
-                except Exception:
-                    pass
-
-                time.sleep(0.2)
-
-                # take screenshot
-                screenshot = self.parser.capture_screen_excluding_overlay(self.overlay_hwnd)
-
-                # restore overlay
-                try:
-                    if self.overlay_hwnd:
-                        win32gui.ShowWindow(self.overlay_hwnd, win32con.SW_RESTORE)
-                except Exception:
-                    pass
+                screenshot = self._capture_with_overlay_hidden()
 
                 if screenshot is None:
                     self.ui.set_status_threadsafe("Screenshot failed", "#e74c3c")
@@ -206,15 +220,35 @@ class BCIController:
             return
 
         target = chunk[key_num - 1]
+        self._execute_goal(target.name, first_target=target)
+
+    def _execute_goal(self, goal: str, first_target: Optional[DetectedElement] = None) -> None:
+        if self.is_processing or self.is_executing:
+            return
 
         self.is_executing = True
+        self.current_goal = goal
         self.ui.clear_options()
-        self.ui.set_status(f"Double-clicking: {target.name[:25]}...", "#f39c12")
+
+        if first_target:
+            self.ui.set_status(f"Executing: {first_target.name[:25]}...", "#f39c12")
+        else:
+            self.ui.set_status(f"Executing goal: {goal[:25]}...", "#f39c12")
 
         def worker() -> None:
             try:
-                self.execute_click(target)
-                time.sleep(0.5)
+                if first_target:
+                    self.execute_click(first_target)
+                    time.sleep(2)
+
+                elements = self.scan_environment()
+                state = infer_state(elements)
+
+                if goal_satisfied(goal, state):
+                    self.ui.set_status_threadsafe(f"Goal achieved: {goal[:25]}", "#27ae60")
+                    time.sleep(1)
+                else:
+                    self.agent_controller.run_goal(goal)
 
                 for remaining in range(self.config.wait_after_click_s, 0, -1):
                     self.ui.set_status_threadsafe(f"Next scan in {remaining}s...", "#9b59b6")
@@ -223,9 +257,10 @@ class BCIController:
                 self.ui.set_status_threadsafe("Taking screenshot...", "#f39c12")
             except Exception as exc:
                 traceback.print_exc()
-                self.ui.set_status_threadsafe(f"Click failed: {str(exc)[:30]}", "#e74c3c")
+                self.ui.set_status_threadsafe(f"Goal failed: {str(exc)[:30]}", "#e74c3c")
             finally:
                 self.is_executing = False
+                self.current_goal = ""
                 self.ui.schedule(0, self.scan)
 
         threading.Thread(target=worker, daemon=True).start()
