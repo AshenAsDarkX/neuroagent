@@ -1,0 +1,24 @@
+{
+  "survivors_count": 20,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Control Panel Home\", \"target\": 9},\n    {\"goal\": \"System\", \"target\": 13},\n    {\"goal\": \"Google Chrome\", \"target\": 14},\n    {\"goal\": \"PyCharm\", \"target\": 15},\n    {\"goal\": \"Back\", \"target\": 16},\n    {\"goal\": \"Forward\", \"target\": 17},\n    {\"goal\": \"Pencil\", \"target\": 18},\n    {\"goal\": \"Gallery\", \"target\": 19}\n  ]\n}",
+  "chosen_indices": [
+    9,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19
+  ],
+  "final_actions": [
+    "Control Panel Home",
+    "System",
+    "Google Chrome",
+    "PyCharm",
+    "Back",
+    "Forward",
+    "Pencil",
+    "Gallery"
+  ]
+}

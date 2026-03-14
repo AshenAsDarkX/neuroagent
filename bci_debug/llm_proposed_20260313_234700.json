@@ -1,0 +1,36 @@
+{
+  "survivors_count": 20,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"click Next\", \"target\": 0},\n    {\"goal\": \"click The onlyMajed\", \"target\": 2},\n    {\"goal\": \"click Music\", \"target\": 3},\n    {\"goal\": \"click Home\", \"target\": 4},\n    {\"goal\": \"click Heart\", \"target\": 5},\n    {\"goal\": \"click Save\", \"target\": 6},\n    {\"goal\": \"click Google Chrome\", \"target\": 7},\n    {\"goal\": \"click Windows\", \"target\": 9},\n    {\"goal\": \"click Switch\", \"target\": 10},\n    {\"goal\": \"click Back\", \"target\": 11},\n    {\"goal\": \"click More options\", \"target\": 12},\n    {\"goal\": \"click Bookmarks\", \"target\": 13},\n    {\"goal\": \"click Play\", \"target\": 14},\n    {\"goal\": \"click Gallery\", \"target\": 15},\n    {\"goal\": \"click Fill\", \"target\": 16},\n    {\"goal\": \"click HP\", \"target\": 17},\n    {\"goal\": \"click Pencil\", \"target\": 18},\n    {\"goal\": \"click Notifications\", \"target\": 19},\n    {\"goal\": \"click a&t video game\", \"target\": 20},\n    {\"goal\": \"click Download\", \"target\": 21}\n  ]\n}",
+  "chosen_indices": [
+    0,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "final_actions": [
+    "click Next",
+    "click The onlyMajed",
+    "click Music",
+    "click Home",
+    "click Heart",
+    "click Save",
+    "click Google Chrome",
+    "click Windows",
+    "click Switch",
+    "click Back",
+    "click More options",
+    "click Bookmarks",
+    "click Play",
+    "click Gallery"
+  ]
+}

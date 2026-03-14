@@ -1,0 +1,36 @@
+{
+  "survivors_count": 20,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"click on Control\", \"target\": 0},\n    {\"goal\": \"click on This\", \"target\": 1},\n    {\"goal\": \"click on Category\", \"target\": 2},\n    {\"goal\": \"click on Programs\", \"target\": 3},\n    {\"goal\": \"click on User Accounts\", \"target\": 4},\n    {\"goal\": \"click on Uninstall program\", \"target\": 5},\n    {\"goal\": \"click on Hardware and Sound\", \"target\": 6},\n    {\"goal\": \"click on a stop button.\", \"target\": 7},\n    {\"goal\": \"click on System\", \"target\": 8},\n    {\"goal\": \"click on Google Chrome\", \"target\": 9},\n    {\"goal\": \"click on PyCharm\", \"target\": 10},\n    {\"goal\": \"click on Spotify\", \"target\": 11},\n    {\"goal\": \"click on Microsoft Edge\", \"target\": 12},\n    {\"goal\": \"click on Gallery\", \"target\": 13},\n    {\"goal\": \"click on Language or time.\", \"target\": 14},\n    {\"goal\": \"click on Reload\", \"target\": 15},\n    {\"goal\": \"click on Windows.\", \"target\": 16},\n    {\"goal\": \"click on Back\", \"target\": 17},\n    {\"goal\": \"click on Up arrow\", \"target\": 18},\n    {\"goal\": \"click on Ribbon\", \"target\": 19}\n  ]\n}",
+  "chosen_indices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13
+  ],
+  "final_actions": [
+    "click on Control",
+    "click on This",
+    "click on Category",
+    "click on Programs",
+    "click on User Accounts",
+    "click on Uninstall program",
+    "click on Hardware and Sound",
+    "click on a stop button.",
+    "click on System",
+    "click on Google Chrome",
+    "click on PyCharm",
+    "click on Spotify",
+    "click on Microsoft Edge",
+    "click on Gallery"
+  ]
+}

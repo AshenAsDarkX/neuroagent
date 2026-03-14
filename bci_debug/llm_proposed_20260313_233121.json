@@ -1,0 +1,30 @@
+{
+  "survivors_count": 20,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Control\", \"target\": 0},\n    {\"goal\": \"This\", \"target\": 1},\n    {\"goal\": \"Category\", \"target\": 2},\n    {\"goal\": \"Programs\", \"target\": 3},\n    {\"goal\": \"User Accounts\", \"target\": 4},\n    {\"goal\": \"Hardware and Sound\", \"target\": 5},\n    {\"goal\": \"Uninstall program\", \"target\": 6},\n    {\"goal\": \"Reload\", \"target\": 11},\n    {\"goal\": \"Back\", \"target\": 17},\n    {\"goal\": \"Up arrow\", \"target\": 18},\n    {\"goal\": \"Forward\", \"target\": 19}\n  ]\n}",
+  "chosen_indices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    11,
+    17,
+    18,
+    19
+  ],
+  "final_actions": [
+    "Control",
+    "This",
+    "Category",
+    "Programs",
+    "User Accounts",
+    "Hardware and Sound",
+    "Uninstall program",
+    "Reload",
+    "Back",
+    "Up arrow",
+    "Forward"
+  ]
+}

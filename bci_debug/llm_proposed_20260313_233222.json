@@ -1,0 +1,36 @@
+{
+  "survivors_count": 20,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"click Next\", \"target\": 0},\n    {\"goal\": \"click agent_state py\", \"target\": 1},\n    {\"goal\": \"click app_ ~configpy\", \"target\": 2},\n    {\"goal\": \"click main\", \"target\": 3},\n    {\"goal\": \"click agent_planner py\", \"target\": 8},\n    {\"goal\": \"click neuroagent\", \"target\": 5},\n    {\"goal\": \"click Current File\", \"target\": 6},\n    {\"goal\": \"click debug_writer py\", \"target\": 7},\n    {\"goal\": \"click agent_planner py\", \"target\": 8},\n    {\"goal\": \"click neuroagent-v5\", \"target\": 9},\n    {\"goal\": \"click goal_evaluator py\", \"target\": 10},\n    {\"goal\": \"click UTF-8\", \"target\": 11},\n    {\"goal\": \"click Project\", \"target\": 12},\n    {\"goal\": \"click models py\", \"target\": 13},\n    {\"goal\": \"click spaces\", \"target\": 14},\n    {\"goal\": \"click main()\", \"target\": 15},\n    {\"goal\": \"click +288\", \"target\": 16},\n    {\"goal\": \"click overlay_uipy\", \"target\": 17},\n    {\"goal\": \"click main__\\\"\", \"target\": 18},\n    {\"goal\": \"click Codex\", \"target\": 19}\n  ]\n}",
+  "chosen_indices": [
+    0,
+    1,
+    2,
+    3,
+    8,
+    5,
+    6,
+    7,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14
+  ],
+  "final_actions": [
+    "click Next",
+    "click agent_state py",
+    "click app_ ~configpy",
+    "click main",
+    "click agent_planner py",
+    "click neuroagent",
+    "click Current File",
+    "click debug_writer py",
+    "click neuroagent-v5",
+    "click goal_evaluator py",
+    "click UTF-8",
+    "click Project",
+    "click models py",
+    "click spaces"
+  ]
+}

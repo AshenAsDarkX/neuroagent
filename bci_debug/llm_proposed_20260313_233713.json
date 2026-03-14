@@ -1,0 +1,36 @@
+{
+  "survivors_count": 20,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Category\", \"target\": 1},\n    {\"goal\": \"This\", \"target\": 2},\n    {\"goal\": \"Programs\", \"target\": 3},\n    {\"goal\": \"User Accounts\", \"target\": 4},\n    {\"goal\": \"Uninstall program\", \"target\": 5},\n    {\"goal\": \"Video Editor\", \"target\": 6},\n    {\"goal\": \"Google Chrome\", \"target\": 7},\n    {\"goal\": \"PyCharm\", \"target\": 8},\n    {\"goal\": \"Reload\", \"target\": 9},\n    {\"goal\": \"Spotify\", \"target\": 10},\n    {\"goal\": \"Gallery\", \"target\": 11},\n    {\"goal\": \"Microsoft Edge\", \"target\": 12},\n    {\"goal\": \"Windows.\", \"target\": 13},\n    {\"goal\": \"Microsoft Office\", \"target\": 14},\n    {\"goal\": \"Pencil\", \"target\": 15},\n    {\"goal\": \"Up arrow\", \"target\": 16},\n    {\"goal\": \"Back\", \"target\": 17},\n    {\"goal\": \"Forward\", \"target\": 18},\n    {\"goal\": \"Print\", \"target\": 19},\n    {\"goal\": \"Ribbon\", \"target\": 20}\n  ]\n}",
+  "chosen_indices": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14
+  ],
+  "final_actions": [
+    "Category",
+    "This",
+    "Programs",
+    "User Accounts",
+    "Uninstall program",
+    "Video Editor",
+    "Google Chrome",
+    "PyCharm",
+    "Reload",
+    "Spotify",
+    "Gallery",
+    "Microsoft Edge",
+    "Windows.",
+    "Microsoft Office"
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "survivors_count": 10,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Close\", \"target\": 0},\n    {\"goal\": \"Control Panel\", \"target\": 1},\n    {\"goal\": \"Save\", \"target\": 7},\n    {\"goal\": \"Fountain Pen\", \"target\": 8},\n    {\"goal\": \"This\", \"target\": 2},\n    {\"goal\": \"Google Chrome\", \"target\": 3},\n    {\"goal\": \"PyCharm\", \"target\": 4},\n    {\"goal\": \"Spotify\", \"target\": 5},\n    {\"goal\": \"Windows\", \"target\": 6},\n    {\"goal\": \"M0,0L9,0 4.5,5z\", \"target\": 10}\n  ]\n}",
+  "chosen_indices": [
+    0,
+    1,
+    7,
+    8,
+    2,
+    3,
+    4,
+    5,
+    6,
+    10
+  ],
+  "final_actions": [
+    "Close",
+    "Control Panel",
+    "Save",
+    "Fountain Pen",
+    "This",
+    "Google Chrome",
+    "PyCharm",
+    "Spotify",
+    "Windows",
+    "M0,0L9,0 4.5,5z"
+  ]
+}

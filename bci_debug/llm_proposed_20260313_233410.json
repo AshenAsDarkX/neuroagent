@@ -1,0 +1,28 @@
+{
+  "survivors_count": 20,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"click on Google Chrome\", \"target\": 5},\n    {\"goal\": \"click on PyCharm\", \"target\": 7},\n    {\"goal\": \"click on Spotify\", \"target\": 8},\n    {\"goal\": \"click on Gallery\", \"target\": 9},\n    {\"goal\": \"click on System\", \"target\": 11},\n    {\"goal\": \"click on Windows.\", \"target\": 12},\n    {\"goal\": \"click on Back\", \"target\": 14},\n    {\"goal\": \"click on Up arrow\", \"target\": 16},\n    {\"goal\": \"click on Forward\", \"target\": 17},\n    {\"goal\": \"click on Print\", \"target\": 19}\n  ]\n}",
+  "chosen_indices": [
+    5,
+    7,
+    8,
+    9,
+    11,
+    12,
+    14,
+    16,
+    17,
+    19
+  ],
+  "final_actions": [
+    "click on Google Chrome",
+    "click on PyCharm",
+    "click on Spotify",
+    "click on Gallery",
+    "click on System",
+    "click on Windows.",
+    "click on Back",
+    "click on Up arrow",
+    "click on Forward",
+    "click on Print"
+  ]
+}

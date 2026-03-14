@@ -1,0 +1,26 @@
+{
+  "survivors_count": 9,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"close window\", \"target\": 0},\n    {\"goal\": \"go back\", \"target\": 1},\n    {\"goal\": \"open BCI\", \"target\": 2},\n    {\"goal\": \"quit application\", \"target\": 3},\n    {\"goal\": \"open more options\", \"target\": 4},\n    {\"goal\": \"maximize window\", \"target\": 5},\n    {\"goal\": \"select date 6, September, 2024\", \"target\": 6},\n    {\"goal\": \"select date 5, September, 2024\", \"target\": 7},\n    {\"goal\": \"select number 1-4\", \"target\": 8}\n  ]\n}",
+  "chosen_indices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "final_actions": [
+    "close window",
+    "go back",
+    "open BCI",
+    "quit application",
+    "open more options",
+    "maximize window",
+    "select date 6, September, 2024",
+    "select date 5, September, 2024",
+    "select number 1-4"
+  ]
+}

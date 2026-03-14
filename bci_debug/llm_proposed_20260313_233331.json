@@ -1,0 +1,36 @@
+{
+  "survivors_count": 20,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Close\", \"target\": 0},\n    {\"goal\": \"Next\", \"target\": 1},\n    {\"goal\": \"main py\", \"target\": 2},\n    {\"goal\": \"neuroagent\", \"target\": 3},\n    {\"goal\": \"main\", \"target\": 4},\n    {\"goal\": \"neuroagent-v5\", \"target\": 5},\n    {\"goal\": \"Project\", \"target\": 6},\n    {\"goal\": \"omniparser_rawjson\", \"target\": 7},\n    {\"goal\": \"Current File\", \"target\": 8},\n    {\"goal\": \"agent_planner py\", \"target\": 9},\n    {\"goal\": \"spaces\", \"target\": 10},\n    {\"goal\": \"screenshot_raw png\", \"target\": 11},\n    {\"goal\": \"UTF-8\", \"target\": 12},\n    {\"goal\": \"+288\", \"target\": 13},\n    {\"goal\": \"20260313_231840\", \"target\": 14},\n    {\"goal\": \"Expand\", \"target\": 15},\n    {\"goal\": \"main__\\\"\", \"target\": 16},\n    {\"goal\": \"C:IUsersil\", \"target\": 17},\n    {\"goal\": \"Mail\", \"target\": 18},\n    {\"goal\": \"Pyramid\", \"target\": 19}\n  ]\n}",
+  "chosen_indices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13
+  ],
+  "final_actions": [
+    "Close",
+    "Next",
+    "main py",
+    "neuroagent",
+    "main",
+    "neuroagent-v5",
+    "Project",
+    "omniparser_rawjson",
+    "Current File",
+    "agent_planner py",
+    "spaces",
+    "screenshot_raw png",
+    "UTF-8",
+    "+288"
+  ]
+}

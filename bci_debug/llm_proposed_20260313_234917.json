@@ -1,0 +1,36 @@
+{
+  "survivors_count": 20,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"click Next\", \"target\": 0},\n    {\"goal\": \"click The onlyMajed\", \"target\": 1},\n    {\"goal\": \"click Custom order\", \"target\": 2},\n    {\"goal\": \"click Z3LLA\", \"target\": 3},\n    {\"goal\": \"click LiveLive\", \"target\": 5},\n    {\"goal\": \"click Home\", \"target\": 6},\n    {\"goal\": \"click Music\", \"target\": 7},\n    {\"goal\": \"click Play button\", \"target\": 8},\n    {\"goal\": \"click Google Chrome\", \"target\": 9},\n    {\"goal\": \"click Heart\", \"target\": 10},\n    {\"goal\": \"click Back\", \"target\": 12},\n    {\"goal\": \"click More options\", \"target\": 13},\n    {\"goal\": \"click Gallery\", \"target\": 14},\n    {\"goal\": \"click Download\", \"target\": 15},\n    {\"goal\": \"click System\", \"target\": 16},\n    {\"goal\": \"click Strikethrough\", \"target\": 17},\n    {\"goal\": \"click Switch\", \"target\": 18},\n    {\"goal\": \"click Windows\", \"target\": 19},\n    {\"goal\": \"click HP\", \"target\": 20}\n  ]\n}",
+  "chosen_indices": [
+    0,
+    1,
+    2,
+    3,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    12,
+    13,
+    14,
+    15
+  ],
+  "final_actions": [
+    "click Next",
+    "click The onlyMajed",
+    "click Custom order",
+    "click Z3LLA",
+    "click LiveLive",
+    "click Home",
+    "click Music",
+    "click Play button",
+    "click Google Chrome",
+    "click Heart",
+    "click Back",
+    "click More options",
+    "click Gallery",
+    "click Download"
+  ]
+}
