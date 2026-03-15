@@ -1,0 +1,22 @@
+{
+  "survivors_count": 19,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Close Microsoft\", \"target\": 0},\n    {\"goal\": \"Change account\", \"target\": 9},\n    {\"goal\": \"User profile or account\", \"target\": 15},\n    {\"goal\": \"Programs\", \"target\": 3},\n    {\"goal\": \"Microsoft Edge Document\", \"target\": 16},\n    {\"goal\": \"Language or translation\", \"target\": 17},\n    {\"goal\": \"Microsoft Edge Security VPN\", \"target\": 18}\n  ]\n}",
+  "chosen_indices": [
+    0,
+    9,
+    15,
+    3,
+    16,
+    17,
+    18
+  ],
+  "final_actions": [
+    "Close Microsoft",
+    "Change account",
+    "User profile or account",
+    "Programs",
+    "Microsoft Edge Document",
+    "Language or translation",
+    "Microsoft Edge Security VPN"
+  ]
+}

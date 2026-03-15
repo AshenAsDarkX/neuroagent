@@ -1,0 +1,24 @@
+{
+  "survivors_count": 13,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"launch Control Panel\", \"target\": 2},\n    {\"goal\": \"launch Google Chrome\", \"target\": 4},\n    {\"goal\": \"launch This PC\", \"target\": 0},\n    {\"goal\": \"launch Gallery\", \"target\": 5},\n    {\"goal\": \"launch Windows\", \"target\": 7},\n    {\"goal\": \"launch Pencil\", \"target\": 8},\n    {\"goal\": \"launch Sound\", \"target\": 11},\n    {\"goal\": \"launch WiFi\", \"target\": 10}\n  ]\n}",
+  "chosen_indices": [
+    2,
+    4,
+    0,
+    5,
+    7,
+    8,
+    11,
+    10
+  ],
+  "final_actions": [
+    "launch Control Panel",
+    "launch Google Chrome",
+    "launch This PC",
+    "launch Gallery",
+    "launch Windows",
+    "launch Pencil",
+    "launch Sound",
+    "launch WiFi"
+  ]
+}

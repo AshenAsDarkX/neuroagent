@@ -1,0 +1,18 @@
+{
+  "survivors_count": 20,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Open Justified\", \"target\": 15},\n    {\"goal\": \"Open Laptop\", \"target\": 16},\n    {\"goal\": \"Launch Microsoft Edge\", \"target\": 21},\n    {\"goal\": \"Close window\", \"target\": 1},\n    {\"goal\": \"Next\", \"target\": 3},\n    {\"goal\": \"Open tutorial\", \"target\": 4}\n  ]\n}",
+  "chosen_indices": [
+    15,
+    16,
+    21,
+    1,
+    4
+  ],
+  "final_actions": [
+    "Open Justified",
+    "Open Laptop",
+    "Launch Microsoft Edge",
+    "Close window",
+    "Open tutorial"
+  ]
+}

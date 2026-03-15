@@ -1,0 +1,18 @@
+{
+  "survivors_count": 20,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Open Theonlymajed\", \"target\": 2},\n    {\"goal\": \"Launch Download\", \"target\": 18},\n    {\"goal\": \"View as full screen\", \"target\": 21},\n    {\"goal\": \"Open Heart\", \"target\": 5},\n    {\"goal\": \"Add\", \"target\": 7},\n    {\"goal\": \"Open Bookmarks\", \"target\": 12}\n  ]\n}",
+  "chosen_indices": [
+    2,
+    18,
+    21,
+    5,
+    12
+  ],
+  "final_actions": [
+    "Open Theonlymajed",
+    "Launch Download",
+    "View as full screen",
+    "Open Heart",
+    "Open Bookmarks"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "survivors_count": 20,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Launch Next\", \"target\": 1},\n    {\"goal\": \"Launch Videos\", \"target\": 3},\n    {\"goal\": \"Launch Pictures\", \"target\": 4},\n    {\"goal\": \"Close in Next\", \"target\": 2},\n    {\"goal\": \"Launch Downloads\", \"target\": 5},\n    {\"goal\": \"Launch Favorites\", \"target\": 6}\n  ]\n}",
+  "chosen_indices": [
+    1,
+    3,
+    4,
+    2,
+    5,
+    6
+  ],
+  "final_actions": [
+    "Launch Next",
+    "Launch Videos",
+    "Launch Pictures",
+    "Close in Next",
+    "Launch Downloads",
+    "Launch Favorites"
+  ]
+}

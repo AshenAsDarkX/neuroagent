@@ -1,0 +1,36 @@
+{
+  "survivors_count": 20,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Close\", \"target\": 0},\n    {\"goal\": \"Category\", \"target\": 2},\n    {\"goal\": \"Ashen Personal\", \"target\": 3},\n    {\"goal\": \"Pictures\", \"target\": 4},\n    {\"goal\": \"Gallery\", \"target\": 5},\n    {\"goal\": \"Adjust yoy\", \"target\": 6},\n    {\"goal\": \"Downloads\", \"target\": 7},\n    {\"goal\": \"Uninstall program\", \"target\": 8},\n    {\"goal\": \"Ease of Access\", \"target\": 9},\n    {\"goal\": \"Language or time.\", \"target\": 10},\n    {\"goal\": \"Accessibility\", \"target\": 11},\n    {\"goal\": \"Microsoft Office\", \"target\": 12},\n    {\"goal\": \"Image\", \"target\": 13},\n    {\"goal\": \"Back\", \"target\": 14},\n    {\"goal\": \"Navigator\", \"target\": 15},\n    {\"goal\": \"Movies\", \"target\": 16},\n    {\"goal\": \"Forward\", \"target\": 17},\n    {\"goal\": \"Image Control\", \"target\": 18},\n    {\"goal\": \"Microsoft Edge Pro\", \"target\": 19},\n    {\"goal\": \"Hotspot\", \"target\": 20}\n  ]\n}",
+  "chosen_indices": [
+    0,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14
+  ],
+  "final_actions": [
+    "Close",
+    "Category",
+    "Ashen Personal",
+    "Pictures",
+    "Gallery",
+    "Adjust yoy",
+    "Downloads",
+    "Uninstall program",
+    "Ease of Access",
+    "Language or time.",
+    "Accessibility",
+    "Microsoft Office",
+    "Image",
+    "Back"
+  ]
+}

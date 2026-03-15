@@ -1,0 +1,24 @@
+{
+  "survivors_count": 20,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Close\", \"target\": 0},\n    {\"goal\": \"Next\", \"target\": 1},\n    {\"goal\": \"Back\", \"target\": 14},\n    {\"goal\": \"Forward\", \"target\": 13},\n    {\"goal\": \"Reload\", \"target\": 15},\n    {\"goal\": \"More\", \"target\": 19},\n    {\"goal\": \"Checklist\", \"target\": 16},\n    {\"goal\": \"Image Editor\", \"target\": 11}\n  ]\n}",
+  "chosen_indices": [
+    0,
+    1,
+    14,
+    13,
+    15,
+    19,
+    16,
+    11
+  ],
+  "final_actions": [
+    "Close",
+    "Next",
+    "Back",
+    "Forward",
+    "Reload",
+    "More",
+    "Checklist",
+    "Image Editor"
+  ]
+}

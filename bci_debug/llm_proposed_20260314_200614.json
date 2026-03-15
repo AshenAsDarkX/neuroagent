@@ -1,0 +1,18 @@
+{
+  "survivors_count": 20,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Launch Close\", \"target\": 1},\n    {\"goal\": \"Launch Videos\", \"target\": 4},\n    {\"goal\": \"Launch Nitro\", \"target\": 5},\n    {\"goal\": \"Go back\", \"target\": 12},\n    {\"goal\": \"Minimize Close\", \"target\": 1},\n    {\"goal\": \"Launch Downloads\", \"target\": 6}\n  ]\n}",
+  "chosen_indices": [
+    1,
+    4,
+    5,
+    12,
+    6
+  ],
+  "final_actions": [
+    "Close window",
+    "Launch Videos",
+    "Launch Nitro",
+    "Go back",
+    "Launch Downloads"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "survivors_count": 20,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Go back\", \"target\": 1},\n    {\"goal\": \"Launch Adobe Express\", \"target\": 2},\n    {\"goal\": \"Launch Microsoft Store\", \"target\": 3},\n    {\"goal\": \"Launch iPhone\", \"target\": 4},\n    {\"goal\": \"Launch Spotify\", \"target\": 5},\n    {\"goal\": \"Minimize NitroSense\", \"target\": 6}\n  ]\n}",
+  "chosen_indices": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "final_actions": [
+    "Go back",
+    "Launch Adobe Express",
+    "Launch Microsoft Store",
+    "Launch iPhone",
+    "Launch Spotify",
+    "Minimize NitroSense"
+  ]
+}

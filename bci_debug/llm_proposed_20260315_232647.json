@@ -1,0 +1,20 @@
+{
+  "survivors_count": 20,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Go back\", \"target\": 19},\n    {\"goal\": \"Launch utilspy\", \"target\": 15},\n    {\"goal\": \"Launch images png\", \"target\": 16},\n    {\"goal\": \"Launch Kingdom-2025.zip\", \"target\": 14},\n    {\"goal\": \"Open Recent\", \"target\": 10},\n    {\"goal\": \"Open Favorites\", \"target\": 4}\n  ]\n}",
+  "chosen_indices": [
+    19,
+    15,
+    16,
+    14,
+    10,
+    4
+  ],
+  "final_actions": [
+    "Go back",
+    "Launch utilspy",
+    "Launch images png",
+    "Launch Kingdom-2025.zip",
+    "Open Recent",
+    "Open Favorites"
+  ]
+}

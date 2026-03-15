@@ -1,0 +1,20 @@
+{
+  "survivors_count": 20,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Launch 2019 2018\", \"target\": 9},\n    {\"goal\": \"Launch Collection\", \"target\": 10},\n    {\"goal\": \"Launch Add phone photos\", \"target\": 11},\n    {\"goal\": \"Launch 2uz6\", \"target\": 12},\n    {\"goal\": \"Launch Darkness\", \"target\": 14},\n    {\"goal\": \"Launch More options\", \"target\": 25}\n  ]\n}",
+  "chosen_indices": [
+    9,
+    10,
+    11,
+    12,
+    14,
+    25
+  ],
+  "final_actions": [
+    "Launch 2019 2018",
+    "Launch Collection",
+    "Launch Add phone photos",
+    "Launch 2uz6",
+    "Launch Darkness",
+    "Launch More options"
+  ]
+}

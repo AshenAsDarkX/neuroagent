@@ -1,0 +1,20 @@
+{
+  "survivors_count": 13,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Close in Help\", \"target\": 0},\n    {\"goal\": \"Info\", \"target\": 1},\n    {\"goal\": \"Open Cancel\", \"target\": 2},\n    {\"goal\": \"Open Comment\", \"target\": 3},\n    {\"goal\": \"Open 470/0\", \"target\": 4},\n    {\"goal\": \"Open Help\", \"target\": 5}\n  ]\n}",
+  "chosen_indices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "final_actions": [
+    "Close in Help",
+    "Info",
+    "Open Cancel",
+    "Open Comment",
+    "Open 470/0",
+    "Open Help"
+  ]
+}

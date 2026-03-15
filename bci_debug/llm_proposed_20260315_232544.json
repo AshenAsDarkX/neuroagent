@@ -1,0 +1,18 @@
+{
+  "survivors_count": 6,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Launch Justified\", \"target\": 1},\n    {\"goal\": \"Toggle Box\", \"target\": 2},\n    {\"goal\": \"Open items\", \"target\": 0},\n    {\"goal\": \"Minimize\", \"target\": 3},\n    {\"goal\": \"Delete\", \"target\": 4},\n    {\"goal\": \"Open M0,0L9,0 4.5,5z\", \"target\": 5}\n  ]\n}",
+  "chosen_indices": [
+    1,
+    2,
+    0,
+    3,
+    5
+  ],
+  "final_actions": [
+    "Launch Justified",
+    "Toggle Box",
+    "Open items",
+    "Minimize",
+    "Open M0,0L9,0 4.5,5z"
+  ]
+}

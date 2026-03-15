@@ -1,0 +1,10 @@
+{
+  "survivors_count": 20,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Open\", \"target\": 1},\n    {\"goal\": \"Launch\", \"target\": 4},\n    {\"goal\": \"Go back\", \"target\": 3},\n    {\"goal\": \"View\", \"target\": 6},\n    {\"goal\": \"Toggle\", \"target\": 21},\n    {\"goal\": \"Adjust\", \"target\": 16}\n  ]\n}",
+  "chosen_indices": [
+    3
+  ],
+  "final_actions": [
+    "Go back"
+  ]
+}

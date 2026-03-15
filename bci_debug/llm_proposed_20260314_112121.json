@@ -1,0 +1,24 @@
+{
+  "survivors_count": 13,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"open Google Chrome\", \"target\": 3},\n    {\"goal\": \"open PyCharm\", \"target\": 4},\n    {\"goal\": \"open Spotify\", \"target\": 5},\n    {\"goal\": \"open folder\", \"target\": 6},\n    {\"goal\": \"open Control Panel\", \"target\": 1},\n    {\"goal\": \"open Windows settings\", \"target\": 7},\n    {\"goal\": \"open WiFi settings\", \"target\": 9},\n    {\"goal\": \"open Sound settings\", \"target\": 11}\n  ]\n}",
+  "chosen_indices": [
+    3,
+    4,
+    5,
+    6,
+    1,
+    7,
+    9,
+    11
+  ],
+  "final_actions": [
+    "open Google Chrome",
+    "open PyCharm",
+    "open Spotify",
+    "open folder",
+    "open Control Panel",
+    "open Windows settings",
+    "open WiFi settings",
+    "open Sound settings"
+  ]
+}

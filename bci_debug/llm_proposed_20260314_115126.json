@@ -1,0 +1,28 @@
+{
+  "survivors_count": 13,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Control Panel\", \"target\": 2},\n    {\"goal\": \"PowerPoint\", \"target\": 3},\n    {\"goal\": \"Google Chrome\", \"target\": 4},\n    {\"goal\": \"Gallery\", \"target\": 5},\n    {\"goal\": \"Spotify\", \"target\": 6},\n    {\"goal\": \"Windows\", \"target\": 7},\n    {\"goal\": \"Subtitles\", \"target\": 8},\n    {\"goal\": \"Pencil\", \"target\": 9},\n    {\"goal\": \"WiFi\", \"target\": 10},\n    {\"goal\": \"Sound\", \"target\": 11}\n  ]\n}",
+  "chosen_indices": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "final_actions": [
+    "Control Panel",
+    "PowerPoint",
+    "Google Chrome",
+    "Gallery",
+    "Spotify",
+    "Windows",
+    "Subtitles",
+    "Pencil",
+    "WiFi",
+    "Sound"
+  ]
+}

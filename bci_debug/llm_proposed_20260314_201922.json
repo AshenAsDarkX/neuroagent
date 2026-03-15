@@ -1,0 +1,20 @@
+{
+  "survivors_count": 20,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Launch Claude Setup exe\", \"target\": 3},\n    {\"goal\": \"Launch PC\", \"target\": 8},\n    {\"goal\": \"Launch mnparsen\", \"target\": 13},\n    {\"goal\": \"Launch exportgantt xlsx\", \"target\": 14},\n    {\"goal\": \"Launch PyAutoGui\", \"target\": 15},\n    {\"goal\": \"Launch Last month\", \"target\": 16}\n  ]\n}",
+  "chosen_indices": [
+    3,
+    8,
+    13,
+    14,
+    15,
+    16
+  ],
+  "final_actions": [
+    "Launch Claude Setup exe",
+    "Launch PC",
+    "Launch mnparsen",
+    "Launch exportgantt xlsx",
+    "Launch PyAutoGui",
+    "Launch Last month"
+  ]
+}

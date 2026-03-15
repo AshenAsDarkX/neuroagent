@@ -1,0 +1,20 @@
+{
+  "survivors_count": 19,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Open Justified\", \"target\": 12},\n    {\"goal\": \"Next in Justified\", \"target\": 0},\n    {\"goal\": \"Open Downloads\", \"target\": 4},\n    {\"goal\": \"Maximize Justified\", \"target\": 15},\n    {\"goal\": \"Open Nitro\", \"target\": 1},\n    {\"goal\": \"Open Gallery\", \"target\": 5}\n  ]\n}",
+  "chosen_indices": [
+    12,
+    0,
+    4,
+    15,
+    1,
+    5
+  ],
+  "final_actions": [
+    "Open Justified",
+    "Next in Justified",
+    "Open Downloads",
+    "Maximize Justified",
+    "Open Nitro",
+    "Open Gallery"
+  ]
+}

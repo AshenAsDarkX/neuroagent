@@ -1,0 +1,25 @@
+{
+  "survivors_count": 20,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Open More options\", \"target\": 19},\n    {\"goal\": \"View\", \"target\": 29},\n    {\"goal\": \"Launch Downloads\", \"target\": 8},\n    {\"goal\": \"Go back\", \"target\": 10},\n    {\"goal\": \"Toggle\", \"target\": 16},\n    {\"goal\": \"Delete\", \"target\": 34}\n  ]\n}",
+  "chosen_indices": [
+    19,
+    8,
+    10
+  ],
+  "final_actions": [
+    "Open More options",
+    "Launch Downloads",
+    "Go back",
+    "Sort",
+    "Open View",
+    "Rename",
+    "Open Share",
+    "Delete",
+    "Open Gallery",
+    "Open Ashen Personal",
+    "Open Tutorial",
+    "Open Videos",
+    "Open Downloads",
+    "Open Acer"
+  ]
+}

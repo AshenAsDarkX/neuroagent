@@ -1,0 +1,10 @@
+{
+  "survivors_count": 2,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Launch Spotify\", \"target\": 0},\n    {\"goal\": \"View by Category\", \"target\": 2}\n  ]\n}",
+  "chosen_indices": [
+    0
+  ],
+  "final_actions": [
+    "Launch Spotify"
+  ]
+}
