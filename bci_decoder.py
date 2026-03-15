@@ -44,11 +44,15 @@ class EEG2CodeBCI:
             dataset_path: str,
             status_callback=None,
             clear_callback=None,
+            correlation_callback=None,
+            eeg_callback=None,
     ):
         self.model_path = model_path
         self.dataset_path = dataset_path
         self.status_callback = status_callback or (lambda msg: None)
         self.clear_callback = clear_callback or (lambda: None)
+        self.correlation_callback = correlation_callback or (lambda corr, sel: None)
+        self.eeg_callback = eeg_callback or (lambda ch0, code, label: None)
 
         self.target_count = 6
         self.sampling_rate = 600          # Hz
@@ -272,6 +276,17 @@ class EEG2CodeBCI:
             all_correlations.append(correlations)
             print(f"[BCI] trial {trial_idx}: CCA correlations: "
                   f"{', '.join(f'{r:.3f}' for r in correlations)}")
+
+            # Fire live update so the display can show the running mean
+            running_mean = list(np.mean(all_correlations, axis=0))
+            running_sel = int(np.argmax(running_mean))
+            self.correlation_callback(running_mean, running_sel)
+
+            # Send raw EEG + stimulation code to the waveform display
+            eeg_ch0 = simulated_eeg[:, 0].tolist()
+            code = self.stim_codes_upsampled[target].tolist()
+            label_text = f"Trial {trial_idx + 1} | T{target + 1}"
+            self.eeg_callback(eeg_ch0, code, label_text)
 
         mean_corr = np.mean(all_correlations, axis=0)
         std_corr = np.std(all_correlations, axis=0)

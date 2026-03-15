@@ -139,6 +139,19 @@ class OmniParserEngine:
                 return None
 
             bbox = (clip_left, clip_top, clip_right, clip_bottom)
+            clip_w = clip_right - clip_left
+            clip_h = clip_bottom - clip_top
+
+            # Ignore tiny windows (system tray popups, tooltips, notification toasts).
+            # Anything smaller than 300×200 is not a real app window.
+            MIN_W, MIN_H = 300, 200
+            if clip_w < MIN_W or clip_h < MIN_H:
+                print(
+                    f"[Capture] Active window too small ({clip_w}×{clip_h}) "
+                    f"— likely a tray popup. Falling back to full desktop."
+                )
+                return self.capture_main_monitor()
+
             screenshot = self._capture_fullscreen_imagegrab(bbox=bbox)
             if screenshot is None:
                 if fallback_to_main:
@@ -329,12 +342,16 @@ class OmniParserEngine:
             ocr_text = []
             ocr_bbox = []
             if isinstance(ocr_bbox_result, (list, tuple)) and len(ocr_bbox_result) >= 2:
-                ocr_text = ocr_bbox_result[0] if ocr_bbox_result[0] is not None else []
-                ocr_bbox = ocr_bbox_result[1] if ocr_bbox_result[1] is not None else []
-            if not isinstance(ocr_text, (list, tuple)):
-                ocr_text = []
-            if not isinstance(ocr_bbox, (list, tuple)):
-                ocr_bbox = []
+                ocr_text = ocr_bbox_result[0] if isinstance(ocr_bbox_result[0], (list, tuple)) else []
+                ocr_bbox = ocr_bbox_result[1] if isinstance(ocr_bbox_result[1], (list, tuple)) else []
+
+            # get_som_labeled_img crashes when passed empty lists — pass None instead
+            # so OmniParser's internals skip OCR processing cleanly.
+            ocr_text_arg = ocr_text if ocr_text else None
+            ocr_bbox_arg = ocr_bbox if ocr_bbox else None
+
+            if not ocr_text:
+                print("no ocr bbox!!!")
 
             box_ratio = img_w / 3200
             draw_bbox_config = {
@@ -349,10 +366,10 @@ class OmniParserEngine:
                 yolo_model,
                 BOX_TRESHOLD=self.config.omni_box_thresh,
                 output_coord_in_ratio=True,
-                ocr_bbox=ocr_bbox,
+                ocr_bbox=ocr_bbox_arg,
                 draw_bbox_config=draw_bbox_config,
                 caption_model_processor=caption_model_processor,
-                ocr_text=ocr_text,
+                ocr_text=ocr_text_arg,
                 iou_threshold=self.config.omni_iou_thresh,
                 imgsz=self.config.omni_img_sz,
                 device=omni_device,
@@ -486,5 +503,3 @@ class OmniParserEngine:
             score += 25
 
         return score
-
-

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import random
 import threading
 import time
 import traceback
@@ -7,6 +8,9 @@ from typing import Any, List, Optional
 
 import pyautogui
 
+from agent_controller import AgentController
+from agent_state import infer_state
+from goal_evaluator import goal_satisfied
 from app_config import AppConfig
 from debug_writer import DebugArtifactWriter
 from models import DetectedElement
@@ -34,7 +38,21 @@ class BCIController:
         self.bci_screen.set_loading(True, "Loading OmniParser...")
         self.parser = OmniParserEngine(config, status_callback=self.bci_screen.set_loading_text)
         self.ranker = ElementRanker(config, self.debug_writer)
+
+        self.bci_screen.set_loading(True, f"Warming up {config.llm_model}...")
+        self._warmup_llm()
         self.bci_screen.set_loading(False)
+
+        # Agentic loop — wired to the environment scan, not the BCI scan
+        self.agent = AgentController(
+            scan_function=self.scan_environment,
+            execute_click_function=self.execute_click,
+            find_element_function=self.find_element_by_name,
+            log_action_function=self.debug_writer.append_agent_action_log,
+            max_steps=5,
+            status_callback=self.bci_screen.set_info,
+        )
+        self.current_goal: str = ""
 
         self.is_processing = False
         self.is_executing = False
@@ -44,15 +62,51 @@ class BCIController:
         self.page_index = 0
         self.last_ranked: List[DetectedElement] = []
 
+        # Simulation mode: cycles through EEG trial groups so each decode
+        # uses data from a different pre-recorded participant gaze target.
+        # In real EEG mode this would be replaced by live signal acquisition.
+        self._sim_trial_group: int = 0
+        self._live_eeg_running: bool = False
+
+        # Tracks whether the LAST scan happened while a window was open.
+        # Used to classify BCI selections as launch goals vs in-app actions.
+        self.current_context_is_window: bool = False
+
         self.bci_screen.root.bind("<space>", lambda _event: self.scan())
         self.bci_screen.root.bind("q", lambda _event: self.quit())
         self.bci_screen.root.bind("<Escape>", lambda _event: self.quit())
+
+    def _warmup_llm(self) -> None:
+        """
+        Send a minimal prompt to Ollama at startup so the model is fully
+        loaded into VRAM before the first real scan. Without this, the first
+        call cold-loads the model and can exceed the 60-120s timeout.
+        """
+        import requests
+        try:
+            print(f"[LLM] Warming up {self.config.llm_model}...")
+            response = requests.post(
+                self.config.llm_url,
+                json={
+                    "model": self.config.llm_model,
+                    "prompt": "hi",
+                    "stream": False,
+                    "options": {"temperature": 0.0},
+                },
+                timeout=180,  # generous — only runs once at startup
+            )
+            if response.status_code == 200:
+                print(f"[LLM] {self.config.llm_model} warmed up and ready.")
+            else:
+                print(f"[LLM] Warmup got HTTP {response.status_code} — continuing anyway.")
+        except Exception as exc:
+            print(f"[LLM] Warmup failed ({exc}) — model will load on first use.")
 
     def run_stimulation_phase(self) -> bool:
         if self.is_processing or self.is_executing or not self.visible_options:
             return False
 
-        duration = 12.0
+        duration = 5.0
         step = 0.1
         total_steps = int(duration / step)
         bar_width = 10
@@ -60,8 +114,68 @@ class BCIController:
         self.bci_screen.set_info("Focus on your target")
         start_time = time.perf_counter()
 
+        # Start live EEG streaming in background thread
+        self._live_eeg_running = True
+        def _stream_eeg():
+            """Generate and push EEG snippets to display while stimulus runs."""
+            import numpy as np
+            sampling_rate = 600
+            snippet_len = 120  # 0.2s of EEG at 600Hz
+            frame_interval = 0.1  # push a new frame every 100ms
+            n_channels = 8
+            noise_level = 0.6
+
+            # Use target 0 code as placeholder during stimulus
+            # (the actual target hint is unknown until decode)
+            code_full = self.bci.stim_codes_upsampled[0]
+            code_short = list(code_full[:snippet_len])
+
+            buffer = []  # rolling EEG buffer for display
+            buffer_max = 600  # show up to 1 second at a time
+
+            trial_num = 0
+            while self._live_eeg_running:
+                t0 = time.perf_counter()
+
+                # Generate a short EEG snippet with noise + code structure
+                eeg = np.random.randn(snippet_len, n_channels) * noise_level
+                for ch in range(n_channels):
+                    eeg[:, ch] += (
+                        self.bci._generate_pink_noise(snippet_len) * 0.3 * noise_level
+                    )
+                    lag = ch
+                    shifted = np.roll(code_full[:snippet_len], lag)
+                    eeg[:, ch] += shifted * (1.0 - noise_level)
+
+                # Append to rolling buffer
+                buffer.extend(eeg[:, 0].tolist())
+                if len(buffer) > buffer_max:
+                    buffer = buffer[-buffer_max:]
+
+                code_display = list(code_full[:len(buffer)])
+
+                # Elapsed progress
+                elapsed = time.perf_counter() - start_time
+                pct = min(int((elapsed / duration) * 100), 100)
+                label = f"Live EEG  {pct}%"
+
+                if hasattr(self.bci_screen, 'update_eeg_wave'):
+                    self.bci_screen.update_eeg_wave(
+                        list(buffer), code_display, label
+                    )
+
+                trial_num += 1
+                # Sleep to maintain ~10fps
+                elapsed_gen = time.perf_counter() - t0
+                sleep_t = max(0, frame_interval - elapsed_gen)
+                time.sleep(sleep_t)
+
+        eeg_thread = threading.Thread(target=_stream_eeg, daemon=True)
+        eeg_thread.start()
+
         for i in range(total_steps):
             if self.is_processing or self.is_executing or not self.visible_options:
+                self._live_eeg_running = False
                 return False
 
             progress = int(((i + 1) / total_steps) * bar_width)
@@ -73,6 +187,9 @@ class BCIController:
             if sleep_s > 0:
                 time.sleep(sleep_s)
 
+        # Stop live streaming — decode phase takes over
+        self._live_eeg_running = False
+        eeg_thread.join(timeout=0.5)
         return True
 
     def _capture_main_monitor(self):
@@ -130,6 +247,20 @@ class BCIController:
         remaining = total - 5
         return (remaining + 3) // 4
 
+    def _is_risky_label(self, label: str) -> bool:
+        """Mirror of ElementRanker risky check — keeps controller self-contained."""
+        risky_kw = {"close", "delete", "remove", "uninstall", "format", "wipe",
+                    "erase", "rename", "terminate", "kill", "shutdown", "restart",
+                    "disable", "reset", "sign out", "log out"}
+        low = label.lower()
+        return any(kw in low for kw in risky_kw)
+
+    def _sort_page_slice(self, actions: List[DetectedElement]) -> List[DetectedElement]:
+        """Within a page slice keep safe actions first, risky ones last."""
+        safe  = [a for a in actions if not self._is_risky_label(a.name)]
+        risky = [a for a in actions if     self._is_risky_label(a.name)]
+        return safe + risky
+
     def _render_action_page(self) -> None:
         total = len(self.all_actions)
         if total == 0:
@@ -138,7 +269,7 @@ class BCIController:
             self.page_index = 0
             self.bci_screen.root.after(0, lambda: self.bci_screen.show_actions([]))
             self.bci_screen.root.after(
-                0, lambda: self.bci_screen.set_info("No options found. Rescanning...")
+                0, lambda: self.bci_screen.set_info("No options found. Press SPACE to rescan.")
             )
             return
 
@@ -148,7 +279,8 @@ class BCIController:
         options: list[dict[str, Any]] = []
 
         if self.page_index == 0:
-            for action in self.all_actions[:5]:
+            page_actions = self._sort_page_slice(self.all_actions[:5])
+            for action in page_actions:
                 options.append(
                     {
                         "kind": "action",
@@ -160,7 +292,8 @@ class BCIController:
                 options.append({"kind": "next", "label": "Other options"})
         else:
             start = 5 + (self.page_index - 1) * 4
-            for action in self.all_actions[start : start + 4]:
+            page_actions = self._sort_page_slice(self.all_actions[start : start + 4])
+            for action in page_actions:
                 options.append(
                     {
                         "kind": "action",
@@ -201,16 +334,16 @@ class BCIController:
 
                 self.bci_screen.set_info("Decoding EEG signal...")
 
-                # Derive which target the user was most likely focusing on during
-                # the stimulation window. We sample the current flicker frame from
-                # bci_screen and find which visible target had the highest ON-time
-                # (most white frames) at that moment. This gives the BCI decoder a
-                # meaningful hint and — critically — means different targets can be
-                # selected in simulation mode instead of always defaulting to 0.
-                target_option = self._infer_attended_target()
+                # Simulation mode: random target hint each decode.
+                # Replace with live EEG acquisition for real hardware use.
+                target_option = random.randint(0, 5)
 
                 decoded_selection, accuracy, trial_index = self.bci.get_selection(target_option)
-                accuracy_threshold = float(getattr(self.bci, "accuracy_threshold", 0.25))
+                accuracy_threshold = float(getattr(self.bci, "accuracy_threshold", 0.40))
+
+                # Keep chart visible for 2s then clear both displays
+                self.bci_screen.root.after(2000, self.bci_screen.clear_correlations)
+                self.bci_screen.root.after(2000, self.bci_screen.clear_eeg_wave)
 
                 if decoded_selection is None or accuracy < accuracy_threshold:
                     self.bci_screen.root.after(
@@ -282,60 +415,6 @@ class BCIController:
 
         threading.Thread(target=worker, daemon=True).start()
 
-    def _infer_attended_target(self) -> int:
-        """
-        Estimate which of the visible BCI targets the user was attending to
-        during the stimulation window.
-
-        Strategy: use the current flicker frame from bci_screen to count how many
-        ON-frames (bit == 1) each visible target showed in the last stimulation
-        cycle.  The target with the most ON-frames in a random offset window is
-        returned.  In simulation mode this naturally varies across calls because
-        the frame counter advances in real time, so each scan cycle picks a
-        different target — eliminating the always-zero bias.
-
-        Falls back to a round-robin counter if stim codes are unavailable.
-        """
-        n_visible = len(self.visible_options)
-        if n_visible == 0:
-            return 0
-
-        # How many BCI target slots are actually shown (max 6)
-        n_targets = min(n_visible, 6)
-
-        try:
-            stim_codes = getattr(self.bci, "stim_codes", None)
-            frame_index = int(getattr(self.bci_screen, "_frame_index", 0))
-
-            if stim_codes is not None and len(stim_codes) >= n_targets:
-                # Count ON-bits for each target across a window ending at current frame.
-                window = 30  # ~0.5 s at 60 Hz
-                scores = []
-                for t in range(n_targets):
-                    code = stim_codes[t]
-                    code_len = len(code)
-                    total = sum(
-                        int(code[(frame_index - i) % code_len])
-                        for i in range(window)
-                    )
-                    scores.append(total)
-
-                best = int(max(range(n_targets), key=lambda i: scores[i]))
-                print(f"[BCI] Attended target hint: {best} "
-                      f"(ON-scores: {scores}, frame={frame_index})")
-                return best
-        except Exception as exc:
-            print(f"[BCI] _infer_attended_target fallback: {exc}")
-
-        # Round-robin fallback — ensures variation across calls even without stim codes
-        count = getattr(self, "_target_hint_counter", 0)
-        self._target_hint_counter = count + 1
-        return count % n_targets
-
-    def _schedule_rescan(self, message: str, delay_ms: int = 1200) -> None:
-        self.bci_screen.root.after(0, lambda m=message: self.bci_screen.set_info(m))
-        self.bci_screen.root.after(delay_ms, self.scan)
-
     def scan(self) -> None:
         if self.is_processing or self.is_executing:
             return
@@ -357,7 +436,6 @@ class BCIController:
                 if screenshot is None:
                     print("[Scan] Screenshot failed.")
                     self.bci_screen.set_loading(False)
-                    self._schedule_rescan("Screenshot failed. Rescanning...")
                     return
 
                 self.bci_screen.set_info("Generating actions...")
@@ -366,6 +444,14 @@ class BCIController:
 
                 ranked = self.ranker.rank(parse_result.elements)
                 self.last_ranked = ranked
+
+                # Record whether we are currently inside an app window or on the desktop.
+                # This is used when the user makes a BCI selection to classify
+                # the goal as a launch goal (desktop) or in-app action (window).
+                from agent_state import infer_state as _infer
+                _ctx_state = _infer(parse_result.elements)
+                self.current_context_is_window = bool(_ctx_state.get("window_open", False))
+
                 self._update_bci_screen_actions(ranked)
                 self.bci_screen.set_loading(False)
 
@@ -381,7 +467,6 @@ class BCIController:
 
                 if not ranked:
                     print("[Scan] No options found.")
-                    self._schedule_rescan("No options found. Rescanning...")
                     return
 
                 self.bci_screen.root.after(0, lambda: self.bci_screen.set_info("Waiting for EEG selection..."))
@@ -390,7 +475,6 @@ class BCIController:
                 traceback.print_exc()
                 print(f"[Scan] Error: {str(exc)[:80]}")
                 self.bci_screen.set_loading(False)
-                self._schedule_rescan("Scan failed. Rescanning...")
             finally:
                 self.is_processing = False
 
@@ -408,27 +492,82 @@ class BCIController:
         self._execute_action(target)
 
     def _execute_action(self, target: DetectedElement) -> None:
+        """Entry point from BCI selection — extracts goal and hands off to agentic loop."""
+        if self.is_processing or self.is_executing:
+            return
+
+        # The goal label is stored on the element by the ranker (e.g. "open Spotify")
+        goal = str(getattr(target, "goal", target.name))
+        self.current_goal = goal
+        self._execute_goal(goal, first_target=target)
+
+    def _execute_goal(self, goal: str, first_target: DetectedElement = None) -> None:
+        """
+        Agentic execution loop:
+        1. Click the BCI-selected element (first action)
+        2. Scan screen → check if goal achieved
+        3. If not, ask LLM what to do next → click → repeat up to max_steps
+
+        This is what makes the system agentic:
+        - It observes the outcome of each action
+        - It replans when the goal is not yet met
+        - It avoids repeating failed actions
+        """
         if self.is_processing or self.is_executing:
             return
 
         self.is_executing = True
-        self.bci_screen.set_info("Executing action...")
-        print(f"[Action] Double-clicking: {target.name}")
 
         def worker() -> None:
             try:
-                self.execute_click(target)
-                self.bci_screen.set_info("Action completed.")
-                time.sleep(0.5)
+                # Step 1: execute the BCI-selected click immediately
+                if first_target:
+                    print(f"[Agent] Initial BCI selection: {first_target.name} → goal: {goal}")
+                    self.bci_screen.set_info(f"Executing: {first_target.name}")
+                    self.execute_click(first_target)
+                    time.sleep(2)  # let screen settle
 
-                for remaining in range(self.config.wait_after_click_s, 0, -1):
-                    print(f"[Action] Next scan in {remaining}s...")
+                # Step 2: check if goal already satisfied after first click.
+                # was_on_desktop tracks whether the BCI scan happened on the
+                # desktop (launch goal) or inside an app (in-app action goal).
+                # In-app actions are always satisfied after one click.
+                elements = self.scan_environment()
+                from agent_state import infer_state
+                from goal_evaluator import goal_satisfied
+                # State BEFORE the click tells us the context we came from
+                was_on_desktop = not bool(self.current_context_is_window)
+                state = infer_state(elements)
+                state["was_on_desktop"] = was_on_desktop
+
+                if goal_satisfied(goal, state, was_on_desktop=was_on_desktop):
+                    print(f"[Agent] Goal achieved after initial click: {goal}")
+                    self.bci_screen.set_info(f"Goal achieved: {goal}")
                     time.sleep(1)
+                else:
+                    # Step 3: hand off to the full agentic loop for replanning.
+                    # Only makes sense for launch goals (was_on_desktop=True).
+                    # In-app actions that fail just give up — there is nothing
+                    # to replan since the action either worked or it did not.
+                    if not was_on_desktop:
+                        print(f"[Agent] In-app action complete (no verification possible): {goal}")
+                    else:
+                        already_tried = [first_target.name] if first_target else []
+                        print(f"[Agent] Goal not yet satisfied — starting agentic loop (already tried: {already_tried})")
+                        self.bci_screen.set_info("Replanning...")
+                        self.agent.run_goal(goal, initial_failed=already_tried)
+
+                # Countdown before next BCI scan cycle
+                self.bci_screen.set_info("Action complete. Rescanning...")
+                for remaining in range(self.config.wait_after_click_s, 0, -1):
+                    print(f"[Agent] Next scan in {remaining}s...")
+                    time.sleep(1)
+
             except Exception as exc:
                 traceback.print_exc()
-                print(f"[Action] Click failed: {str(exc)[:60]}")
+                print(f"[Agent] Goal execution failed: {str(exc)[:60]}")
             finally:
                 self.is_executing = False
+                self.current_goal = ""
                 self.bci_screen.root.after(0, self.scan)
 
         threading.Thread(target=worker, daemon=True).start()

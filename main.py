@@ -37,6 +37,8 @@ def main() -> None:
         dataset_path=os.path.join(config.base_dir, "data", "VP1.mat"),
         status_callback=show_phase,
         clear_callback=clear_phase,
+        correlation_callback=bci_screen.update_correlations,
+        eeg_callback=bci_screen.update_eeg_wave,
     )
     bci_screen.set_loading(True, "Loading OmniParser...")
     app = BCIController(config, bci=bci, bci_screen=bci_screen)
