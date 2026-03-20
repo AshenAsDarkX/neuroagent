@@ -1,0 +1,21 @@
+{
+  "survivors_count": 15,
+  "raw_response": "",
+  "chosen_indices": [],
+  "final_actions": [
+    "Open Control Panel",
+    "Launch Spotify",
+    "Open Downloads Shortcut",
+    "Open Videos Shortcut",
+    "Open Pictures Shortcut",
+    "Open Eng Us",
+    "Launch Chrome",
+    "Open Folder",
+    "Open Start Menu",
+    "Open Pencil",
+    "Open Subtitles",
+    "Open Page",
+    "Open Sound",
+    "Adobe Photoshop Elements"
+  ]
+}
