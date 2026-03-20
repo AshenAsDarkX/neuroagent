@@ -34,7 +34,7 @@ class VerificationResult:
 class GoalVerifier:
     """
     Verifies whether a BCI-selected in-app goal was achieved by visually
-    inspecting the screen after the action using Gemma3:4b vision.
+    inspecting the screen after the action using Gemma3 vision.
 
     Only used for in-app actions (was_on_desktop=False).
     Launch goals are already verified by Win32 window title checking.

@@ -1,0 +1,20 @@
+{
+  "survivors_count": 17,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Open Programs\", \"target\": 2},\n    {\"goal\": \"Launch Microsoft Edge\", \"target\": 4},\n    {\"goal\": \"Launch Microsoft Office\", \"target\": 11},\n    {\"goal\": \"Go back\", \"target\": 1},\n    {\"goal\": \"Minimize Microsoft\", \"target\": 0},\n    {\"goal\": \"Open Accessibility\", \"target\": 8}\n  ]\n}",
+  "chosen_indices": [
+    2,
+    4,
+    11,
+    1,
+    0,
+    8
+  ],
+  "final_actions": [
+    "Open Programs",
+    "Launch Microsoft Edge",
+    "Launch Microsoft Office",
+    "Go back",
+    "Minimize Microsoft",
+    "Open Accessibility"
+  ]
+}

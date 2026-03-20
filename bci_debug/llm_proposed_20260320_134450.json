@@ -1,0 +1,20 @@
+{
+  "survivors_count": 15,
+  "raw_response": "{\"actions\": [\n    {\"goal\": \"Launch Control\", \"target\": 1},\n    {\"goal\": \"Go back\", \"target\": 11},\n    {\"goal\": \"Go forward\", \"target\": 12},\n    {\"goal\": \"View Documents\", \"target\": 13},\n    {\"goal\": \"Toggle Settings\", \"target\": 14},\n    {\"goal\": \"Adjust Volume\", \"target\": 15},\n    {\"goal\": \"Close Window\", \"target\": 16},\n    {\"goal\": \"Add File\", \"target\": 17},\n    {\"goal\": \"Download File\", \"target\": 18},\n    {\"goal\": \"Open File\", \"target\": 19},\n    {\"goal\": \"View Folder\", \"target\": 20},\n    {\"goal\": \"Toggle Background\", \"target\": 21},\n    {\"goal\": \"Adjust Brightness\", \"target\": 22}\n]}",
+  "chosen_indices": [
+    1,
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "final_actions": [
+    "Launch Control",
+    "Go back",
+    "Go forward",
+    "View Documents",
+    "Toggle Settings",
+    "Adjust Volume"
+  ]
+}

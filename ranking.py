@@ -204,6 +204,13 @@ class ElementRanker:
 
         # Push risky/destructive actions to the end so BCI top 5 are never dangerous
         result = self._push_risky_actions_last(result)
+
+        # Detect if scrolling is available and inject scroll options
+        scroll_elements = self._make_scroll_elements(elements)
+        if scroll_elements:
+            result = result + scroll_elements
+            print(f"[Scroll] Added scroll options: {[e.name for e in scroll_elements]}")
+
         print(f"[LLM] Final {len(result)} actions: {[item.name for item in result]}")
         return result
 
@@ -240,6 +247,85 @@ class ElementRanker:
             risky_names = [e.name for e in risky]
             print(f"[Ranker] Pushed risky actions to end: {risky_names}")
         return safe + risky
+
+    # Scrollbar-related element type names OmniParser may assign
+    _SCROLLBAR_TYPES: frozenset = frozenset({
+        "scrollbar", "scroll", "scroll_bar", "scrollbar_vertical",
+        "scrollbar_horizontal", "vertical_scroll", "slider",
+    })
+    # Keywords in element names that indicate a scrollbar
+    _SCROLLBAR_NAME_KEYWORDS: frozenset = frozenset({
+        "scrollbar", "scroll bar", "vertical scroll", "horizontal scroll",
+        "scroll thumb", "scroll track",
+    })
+    # Minimum number of elements in a window before we assume scrolling may help
+    _SCROLL_ELEMENT_THRESHOLD: int = 12
+
+    def _make_scroll_elements(
+        self, elements: List[DetectedElement]
+    ) -> List[DetectedElement]:
+        """
+        Detect whether the current screen has scrollable content and return
+        synthetic Scroll Down / Scroll Up DetectedElement objects if so.
+
+        Detection strategy (two-signal approach):
+          1. Primary  — OmniParser detected a scrollbar element
+          2. Fallback — window has many elements (long content likely off-screen)
+
+        Scroll elements are given a special sentinel bbox/center of (0,0,0,0)
+        so controller.execute_click can identify them and call
+        pyautogui.scroll() instead of doubleClick().
+        """
+        if not elements:
+            return []
+
+        # Check if we are inside a window (not on desktop)
+        img_h = 1080
+        taskbar_threshold = 0.93
+        window_elements = [
+            e for e in elements
+            if ((e.bbox[1] + e.bbox[3]) / 2) / img_h < taskbar_threshold
+        ]
+        if len(window_elements) < 5:
+            # On desktop — scrolling not applicable
+            return []
+
+        # Signal 1: OmniParser detected a scrollbar
+        has_scrollbar = any(
+            e.element_type.lower() in self._SCROLLBAR_TYPES or
+            any(kw in e.name.lower() for kw in self._SCROLLBAR_NAME_KEYWORDS)
+            for e in elements
+        )
+
+        # Signal 2: many elements in window — likely more content below
+        has_many_elements = len(window_elements) >= self._SCROLL_ELEMENT_THRESHOLD
+
+        if not has_scrollbar and not has_many_elements:
+            return []
+
+        reason = "scrollbar detected" if has_scrollbar else f"{len(window_elements)} elements visible"
+        print(f"[Scroll] Scrolling available ({reason})")
+
+        # Sentinel values — controller identifies these by name
+        sentinel_bbox = (0, 0, 0, 0)
+        sentinel_center = (0, 0)
+
+        scroll_down = DetectedElement(
+            name="Scroll Down",
+            bbox=sentinel_bbox,
+            center=sentinel_center,
+            interactive=True,
+            element_type="scroll_action",
+        )
+        scroll_up = DetectedElement(
+            name="Scroll Up",
+            bbox=sentinel_bbox,
+            center=sentinel_center,
+            interactive=True,
+            element_type="scroll_action",
+        )
+        # Down first — much more common use case
+        return [scroll_down, scroll_up]
 
     # ---------------------------------------------------------------------------
     # Keywords that indicate an element requires keyboard input — unusable in BCI

@@ -40,8 +40,8 @@ class BCIController:
         self.parser = OmniParserEngine(config, status_callback=self.bci_screen.set_loading_text)
         self.ranker = ElementRanker(config, self.debug_writer)
 
-        self.bci_screen.set_loading(True, f"Warming up {config.llm_model}...")
-        self._warmup_llm()
+        # Model already loaded by main.py _ensure_model_loaded() before this runs
+        self.bci_screen.set_loading(True, f"{config.llm_model} ready.")
         self.bci_screen.set_loading(False)
 
         # Agentic loop — wired to the environment scan, not the BCI scan
@@ -216,9 +216,29 @@ class BCIController:
         return ranked
 
     def execute_click(self, target: DetectedElement) -> None:
+        # Scroll actions have a sentinel element_type and zero center
+        if getattr(target, "element_type", "") == "scroll_action":
+            self._execute_scroll(target.name)
+            return
         cx, cy = target.center
         print(f"Double-click: {target.name} -> ({cx}, {cy})")
         pyautogui.doubleClick(cx, cy)
+
+    def _execute_scroll(self, direction: str) -> None:
+        """
+        Scroll the active window up or down.
+        pyautogui.scroll() uses OS scroll units — negative = down, positive = up.
+        We move the mouse to the centre of the primary screen first so the
+        scroll event hits the active window content area.
+        """
+        import pyautogui as _pg
+        # Move to centre of primary monitor content area before scrolling
+        screen_cx, screen_cy = 960, 540
+        _pg.moveTo(screen_cx, screen_cy, duration=0.1)
+
+        clicks = -5 if "down" in direction.lower() else 5
+        _pg.scroll(clicks)
+        print(f"[Scroll] {direction} ({clicks} units) at ({screen_cx}, {screen_cy})")
 
     def find_element_by_name(
         self, element_name: str, elements: List[DetectedElement]
@@ -543,58 +563,37 @@ class BCIController:
 
                 if goal_satisfied(goal, state, was_on_desktop=was_on_desktop):
                     if was_on_desktop:
-                        # Launch goal — Win32 confirmed the window opened
+                        # Launch goal — Win32 confirmed window opened
                         print(f"[Agent] Goal achieved after initial click: {goal}")
                         self.bci_screen.set_info(f"Goal achieved: {goal}")
                     else:
-                        # In-app action — run vision verification
-                        self.bci_screen.set_info("Verifying action...")
-                        print(f"[Agent] In-app click done — running vision verification for: {goal}")
-                        verify_screenshot = self._capture_main_monitor()
-                        if verify_screenshot is not None:
-                            result = self.verifier.verify(
-                                goal=goal,
-                                screenshot=verify_screenshot,
-                                context="User was navigating inside an application",
-                            )
-                            if result.achieved:
-                                print(f"[Agent] Vision verified: {result.reason}")
-                                self.bci_screen.set_info(f"✓ Verified: {result.reason}")
+                        # In-app action — run vision verification only for
+                        # meaningful state changes, not navigation/scroll
+                        if self._should_verify(goal):
+                            self.bci_screen.set_info("Verifying action...")
+                            verify_screenshot = self._capture_main_monitor()
+                            if verify_screenshot is not None:
+                                result = self.verifier.verify(
+                                    goal=goal,
+                                    screenshot=verify_screenshot,
+                                    context="User was navigating inside an application",
+                                )
+                                if result.achieved:
+                                    print(f"[Agent] Vision verified: {result.reason}")
+                                    self.bci_screen.set_info(f"✓ Verified: {result.reason}")
+                                else:
+                                    print(f"[Agent] Vision says NOT achieved: {result.reason}")
+                                    self.bci_screen.set_info(f"✗ Not verified: {result.reason}")
                             else:
-                                print(f"[Agent] Vision says NOT achieved: {result.reason}")
-                                self.bci_screen.set_info(f"✗ Not verified: {result.reason}")
+                                print(f"[Agent] Goal achieved: {goal}")
+                                self.bci_screen.set_info(f"Goal achieved: {goal}")
                         else:
                             print(f"[Agent] Goal achieved after initial click: {goal}")
                             self.bci_screen.set_info(f"Goal achieved: {goal}")
                     time.sleep(1)
                 else:
-                    # Step 3: hand off to the full agentic loop for replanning.
-                    # For in-app actions, use vision-based verification instead
-                    # of just assuming the click worked.
                     if not was_on_desktop:
-                        # Take a screenshot and ask Gemma3:4b vision to verify
-                        self.bci_screen.set_info("Verifying action...")
-                        print(f"[Agent] In-app action — running vision verification for: {goal}")
-                        verify_screenshot = self._capture_main_monitor()
-                        if verify_screenshot is not None:
-                            result = self.verifier.verify(
-                                goal=goal,
-                                screenshot=verify_screenshot,
-                                context=f"User was navigating inside an application",
-                            )
-                            if result.achieved:
-                                print(f"[Agent] Vision verified goal achieved: {result.reason}")
-                                self.bci_screen.set_info(
-                                    f"✓ Verified: {result.reason}"
-                                )
-                            else:
-                                print(f"[Agent] Vision says goal NOT achieved: {result.reason}")
-                                self.bci_screen.set_info(
-                                    f"✗ Not verified: {result.reason}"
-                                )
-                        else:
-                            print(f"[Agent] Could not take verification screenshot")
-                            self.bci_screen.set_info("Action complete (unverified).")
+                        print(f"[Agent] In-app action complete (no verification possible): {goal}")
                     else:
                         already_tried = [first_target.name] if first_target else []
                         print(f"[Agent] Goal not yet satisfied — starting agentic loop (already tried: {already_tried})")
@@ -616,6 +615,31 @@ class BCIController:
                 self.bci_screen.root.after(0, self.scan)
 
         threading.Thread(target=worker, daemon=True).start()
+
+    def _should_verify(self, goal: str) -> bool:
+        """
+        Returns True only for goals that represent meaningful state changes
+        worth verifying visually. Navigation and scroll actions are skipped
+        to avoid unnecessary LLM calls and VRAM pressure.
+
+        Verify:  play, pause, toggle, enable, disable, save, submit, send
+        Skip:    open, launch, go back, scroll, close, navigate, folder clicks
+        """
+        low = goal.lower()
+        # Always skip scroll actions
+        if low.startswith("scroll"):
+            return False
+        # Skip pure navigation — these are visually obvious
+        skip_prefixes = ("go back", "open ", "launch ", "navigate", "close ")
+        if any(low.startswith(p) for p in skip_prefixes):
+            return False
+        # Verify meaningful state-change actions
+        verify_keywords = (
+            "play", "pause", "toggle", "enable", "disable",
+            "save", "submit", "send", "apply", "confirm",
+            "turn on", "turn off", "mute", "unmute",
+        )
+        return any(kw in low for kw in verify_keywords)
 
     def quit(self) -> None:
         print("Shutting down...")

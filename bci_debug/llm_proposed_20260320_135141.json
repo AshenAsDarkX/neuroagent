@@ -1,0 +1,32 @@
+{
+  "survivors_count": 14,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Launch Spotify\", \"target\": 2},\n    {\"goal\": \"Go back\", \"target\": 1},\n    {\"goal\": \"Go forward\", \"target\": 3},\n    {\"goal\": \"View Controls\", \"target\": 4},\n    {\"goal\": \"Toggle Settings\", \"target\": 5},\n    {\"goal\": \"Adjust Volume\", \"target\": 6},\n    {\"goal\": \"Close Window\", \"target\": 7},\n    {\"goal\": \"Add File\", \"target\": 8},\n    {\"goal\": \"Download File\", \"target\": 9},\n    {\"goal\": \"Open File\", \"target\": 10},\n    {\"goal\": \"Open Folder\", \"target\": 11},\n    {\"goal\": \"View History\", \"target\": 12}\n  ]\n}",
+  "chosen_indices": [
+    2,
+    1,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ],
+  "final_actions": [
+    "Launch Spotify",
+    "Go back",
+    "Go forward",
+    "View Controls",
+    "Toggle Settings",
+    "Adjust Volume",
+    "Close Window",
+    "Add File",
+    "Download File",
+    "Open File",
+    "Open Folder",
+    "View History"
+  ]
+}

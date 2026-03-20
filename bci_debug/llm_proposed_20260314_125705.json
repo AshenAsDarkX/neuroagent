@@ -1,9 +1,0 @@
-{
-  "survivors_count": 2,
-  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Launch Spotify\", \"target\": 11},\n    {\"goal\": \"Open Control Panel\", \"target\": 4}\n  ]\n}",
-  "chosen_indices": [],
-  "final_actions": [
-    "Click Close",
-    "Click Ok"
-  ]
-}

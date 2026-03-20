@@ -1,0 +1,20 @@
+{
+  "survivors_count": 14,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Open Control Panel\", \"target\": 0},\n    {\"goal\": \"Launch Spotify\", \"target\": 2},\n    {\"goal\": \"Open Downloads Shortcut\", \"target\": 10},\n    {\"goal\": \"Open Videos Shortcut\", \"target\": 11},\n    {\"goal\": \"Open Pictures Shortcut\", \"target\": 12},\n    {\"goal\": \"Open ENG US\", \"target\": 1}\n  ]\n}",
+  "chosen_indices": [
+    0,
+    2,
+    10,
+    11,
+    12,
+    1
+  ],
+  "final_actions": [
+    "Open Control Panel",
+    "Launch Spotify",
+    "Open Downloads Shortcut",
+    "Open Videos Shortcut",
+    "Open Pictures Shortcut",
+    "Open ENG US"
+  ]
+}
