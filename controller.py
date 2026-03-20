@@ -11,6 +11,7 @@ import pyautogui
 from agent_controller import AgentController
 from agent_state import infer_state
 from goal_evaluator import goal_satisfied
+from goal_verifier import GoalVerifier
 from app_config import AppConfig
 from debug_writer import DebugArtifactWriter
 from models import DetectedElement
@@ -53,6 +54,7 @@ class BCIController:
             status_callback=self.bci_screen.set_info,
         )
         self.current_goal: str = ""
+        self.verifier = GoalVerifier(model=config.llm_model)
 
         self.is_processing = False
         self.is_executing = False
@@ -540,16 +542,59 @@ class BCIController:
                 state["was_on_desktop"] = was_on_desktop
 
                 if goal_satisfied(goal, state, was_on_desktop=was_on_desktop):
-                    print(f"[Agent] Goal achieved after initial click: {goal}")
-                    self.bci_screen.set_info(f"Goal achieved: {goal}")
+                    if was_on_desktop:
+                        # Launch goal — Win32 confirmed the window opened
+                        print(f"[Agent] Goal achieved after initial click: {goal}")
+                        self.bci_screen.set_info(f"Goal achieved: {goal}")
+                    else:
+                        # In-app action — run vision verification
+                        self.bci_screen.set_info("Verifying action...")
+                        print(f"[Agent] In-app click done — running vision verification for: {goal}")
+                        verify_screenshot = self._capture_main_monitor()
+                        if verify_screenshot is not None:
+                            result = self.verifier.verify(
+                                goal=goal,
+                                screenshot=verify_screenshot,
+                                context="User was navigating inside an application",
+                            )
+                            if result.achieved:
+                                print(f"[Agent] Vision verified: {result.reason}")
+                                self.bci_screen.set_info(f"✓ Verified: {result.reason}")
+                            else:
+                                print(f"[Agent] Vision says NOT achieved: {result.reason}")
+                                self.bci_screen.set_info(f"✗ Not verified: {result.reason}")
+                        else:
+                            print(f"[Agent] Goal achieved after initial click: {goal}")
+                            self.bci_screen.set_info(f"Goal achieved: {goal}")
                     time.sleep(1)
                 else:
                     # Step 3: hand off to the full agentic loop for replanning.
-                    # Only makes sense for launch goals (was_on_desktop=True).
-                    # In-app actions that fail just give up — there is nothing
-                    # to replan since the action either worked or it did not.
+                    # For in-app actions, use vision-based verification instead
+                    # of just assuming the click worked.
                     if not was_on_desktop:
-                        print(f"[Agent] In-app action complete (no verification possible): {goal}")
+                        # Take a screenshot and ask Gemma3:4b vision to verify
+                        self.bci_screen.set_info("Verifying action...")
+                        print(f"[Agent] In-app action — running vision verification for: {goal}")
+                        verify_screenshot = self._capture_main_monitor()
+                        if verify_screenshot is not None:
+                            result = self.verifier.verify(
+                                goal=goal,
+                                screenshot=verify_screenshot,
+                                context=f"User was navigating inside an application",
+                            )
+                            if result.achieved:
+                                print(f"[Agent] Vision verified goal achieved: {result.reason}")
+                                self.bci_screen.set_info(
+                                    f"✓ Verified: {result.reason}"
+                                )
+                            else:
+                                print(f"[Agent] Vision says goal NOT achieved: {result.reason}")
+                                self.bci_screen.set_info(
+                                    f"✗ Not verified: {result.reason}"
+                                )
+                        else:
+                            print(f"[Agent] Could not take verification screenshot")
+                            self.bci_screen.set_info("Action complete (unverified).")
                     else:
                         already_tried = [first_target.name] if first_target else []
                         print(f"[Agent] Goal not yet satisfied — starting agentic loop (already tried: {already_tried})")

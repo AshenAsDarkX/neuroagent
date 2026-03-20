@@ -1,6 +1,55 @@
 import ctypes
 import os
+import subprocess
+import time
 import traceback
+import requests
+
+
+def _ensure_ollama_running() -> None:
+    """
+    Make sure Ollama server is running before the app starts.
+    If it's already up, do nothing. If not, start it as a background process
+    and wait until it responds on port 11434.
+    """
+    url = "http://localhost:11434/api/tags"
+
+    # Check if already running
+    try:
+        r = requests.get(url, timeout=3)
+        if r.status_code == 200:
+            print("[Ollama] Server already running.")
+            return
+    except Exception:
+        pass
+
+    # Not running — start it
+    print("[Ollama] Starting Ollama server...")
+    try:
+        subprocess.Popen(
+            ["ollama", "serve"],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            creationflags=subprocess.CREATE_NO_WINDOW,  # Windows: no console popup
+        )
+    except Exception as exc:
+        print(f"[Ollama] Could not start Ollama: {exc}")
+        return
+
+    # Wait up to 30 seconds for it to come up
+    for attempt in range(30):
+        time.sleep(1)
+        try:
+            r = requests.get(url, timeout=2)
+            if r.status_code == 200:
+                print(f"[Ollama] Server ready after {attempt + 1}s.")
+                return
+        except Exception:
+            pass
+        print(f"[Ollama] Waiting for server... ({attempt + 1}s)")
+
+    print("[Ollama] Server did not start in time — continuing anyway.")
+
 
 
 def _enable_windows_dpi_awareness() -> None:
@@ -24,6 +73,7 @@ from controller import BCIController
 
 
 def main() -> None:
+    _ensure_ollama_running()
     config = AppConfig.load()
     bci_screen = BCIDisplay()
     def show_phase(message: str) -> None:
