@@ -65,3 +65,44 @@ def decode_b64_image_to_pil(image_b64: str) -> Optional[Image.Image]:
         return Image.open(BytesIO(decoded)).convert("RGB")
     except Exception:
         return None
+
+
+def compute_page_slice(
+    total: int,
+    page: int,
+    items_per_page: int,
+) -> Tuple[int, int, bool, bool]:
+    if total <= 0:
+        return 0, 0, False, False
+
+    if items_per_page <= 0:
+        return 0, 0, False, False
+
+    start = 0
+    for p in range(page):
+        has_prev = p > 0
+        remaining = total - start
+        if remaining <= 0:
+            return 0, 0, False, False
+
+        max_without_next = items_per_page - (1 if has_prev else 0)
+        has_next = remaining > max_without_next
+        content_slots = items_per_page - (1 if has_prev else 0) - (1 if has_next else 0)
+        if content_slots < 1:
+            content_slots = 1
+
+        start += min(content_slots, remaining)
+
+    has_prev = page > 0
+    remaining = total - start
+    if remaining <= 0:
+        return 0, 0, False, False
+
+    max_without_next = items_per_page - (1 if has_prev else 0)
+    has_next = remaining > max_without_next
+    content_slots = items_per_page - (1 if has_prev else 0) - (1 if has_next else 0)
+    if content_slots < 1:
+        content_slots = 1
+
+    end = start + min(content_slots, remaining)
+    return start, end, has_prev, has_next

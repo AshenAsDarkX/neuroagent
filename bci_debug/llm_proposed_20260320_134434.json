@@ -1,0 +1,22 @@
+{
+  "survivors_count": 14,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Launch Spotify\", \"target\": 3},\n    {\"goal\": \"Launch Downloads Shortcut\", \"target\": 11},\n    {\"goal\": \"Launch Videos Shortcut\", \"target\": 12},\n    {\"goal\": \"Launch Pictures Shortcut\", \"target\": 13},\n    {\"goal\": \"LaunchENG US\", \"target\": 2},\n    {\"goal\": \"Toggle Controls\", \"target\": 6},\n    {\"goal\": \"Adjust Settings\", \"target\": 7}\n  ]\n}",
+  "chosen_indices": [
+    3,
+    11,
+    12,
+    13,
+    2,
+    6,
+    7
+  ],
+  "final_actions": [
+    "Launch Spotify",
+    "Launch Downloads Shortcut",
+    "Launch Videos Shortcut",
+    "Launch Pictures Shortcut",
+    "LaunchENG US",
+    "Toggle Controls",
+    "Adjust Settings"
+  ]
+}

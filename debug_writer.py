@@ -67,3 +67,28 @@ class DebugArtifactWriter:
                 )
         except Exception:
             pass
+
+    def append_agent_action_log(
+        self,
+        timestamp: str,
+        selected_element: Optional[str],
+        goal_state: Optional[Dict[str, Any]],
+        action_result: str,
+        goal: Optional[str] = None,
+    ) -> None:
+        try:
+            ensure_dir(self.config.debug_dir)
+            output_path = os.path.join(self.config.debug_dir, "agent_actions.jsonl")
+            payload: Dict[str, Any] = {
+                "timestamp": timestamp,
+                "selected_element": selected_element,
+                "goal_state": goal_state,
+                "action_result": action_result,
+            }
+            if goal is not None:
+                payload["goal"] = goal
+
+            with open(output_path, "a", encoding="utf-8") as handle:
+                handle.write(json.dumps(payload, ensure_ascii=False) + "\n")
+        except Exception:
+            pass

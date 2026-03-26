@@ -1,0 +1,20 @@
+{
+  "survivors_count": 20,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Open React-Native-1.Sv\", \"target\": 4},\n    {\"goal\": \"Open Ravindu Iitdocx\", \"target\": 13},\n    {\"goal\": \"Open Clover-Png\", \"target\": 14},\n    {\"goal\": \"Open Agent Vvvpng\", \"target\": 15},\n    {\"goal\": \"Open Yesterday\", \"target\": 16},\n    {\"goal\": \"Open Today\", \"target\": 18}\n  ]\n}",
+  "chosen_indices": [
+    4,
+    13,
+    14,
+    15,
+    16,
+    18
+  ],
+  "final_actions": [
+    "Open React-Native-1.Sv",
+    "Open Ravindu Iitdocx",
+    "Open Clover-Png",
+    "Open Agent Vvvpng",
+    "Open Yesterday",
+    "Open Today"
+  ]
+}

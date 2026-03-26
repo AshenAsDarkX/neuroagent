@@ -1,0 +1,20 @@
+{
+  "survivors_count": 20,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Launch Lightroom\", \"target\": 10},\n    {\"goal\": \"Open Screenshots\", \"target\": 11},\n    {\"goal\": \"Open Camera Roll\", \"target\": 13},\n    {\"goal\": \"Open Nitro\", \"target\": 16},\n    {\"goal\": \"Open Justified\", \"target\": 21},\n    {\"goal\": \"Maximize window\", \"target\": 22}\n  ]\n}",
+  "chosen_indices": [
+    10,
+    11,
+    13,
+    16,
+    21,
+    22
+  ],
+  "final_actions": [
+    "Launch Lightroom",
+    "Open Screenshots",
+    "Open Camera Roll",
+    "Open Nitro",
+    "Open Justified",
+    "Maximize window"
+  ]
+}

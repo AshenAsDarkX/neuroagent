@@ -1,0 +1,20 @@
+{
+  "survivors_count": 17,
+  "raw_response": "{\n  \"actions\": [\n    {\"goal\": \"Open Start\", \"target\": 11},\n    {\"goal\": \"Launch Accounts\", \"target\": 2},\n    {\"goal\": \"Launch Chat\", \"target\": 1},\n    {\"goal\": \"Open Increase\", \"target\": 13},\n    {\"goal\": \"Minimize\", \"target\": 12},\n    {\"goal\": \"Open Reload\", \"target\": 7}\n  ]\n}",
+  "chosen_indices": [
+    11,
+    2,
+    1,
+    13,
+    12,
+    7
+  ],
+  "final_actions": [
+    "Open Start",
+    "Launch Accounts",
+    "Launch Chat",
+    "Open Increase",
+    "Minimize",
+    "Open Reload"
+  ]
+}
